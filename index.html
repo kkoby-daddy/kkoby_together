@@ -186,7 +186,7 @@
     font-size: 16px; line-height: 1.8; color: var(--text-sub); 
   }
 
-  /* 펫잡이 알리미 패널 스타일 (통합) */
+  /* 펫잡이 알리미 패널 스타일 */
   .alarm-panel { grid-column: 1 / -1; min-height: auto; margin-top: 10px; }
   .alarm-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px; }
   .btn-sm { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-main); transition: 0.2s; }
@@ -195,7 +195,7 @@
   .status-badge { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.3); color: var(--text-sub); border: 1px solid transparent; }
   .status-badge.active { color: var(--ok); border-color: var(--ok); }
   
-  .log-box { width: 100%; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; font-family: monospace; font-size: 13px; color: #cfe1ff; min-height: 120px; max-height: 180px; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; word-break: break-all; border: 1px solid rgba(255,255,255,0.05); }
+  .log-box { width: 100%; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; font-family: monospace; font-size: 13px; color: #cfe1ff; min-height: 120px; max-height: 200px; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; word-break: break-all; border: 1px solid rgba(255,255,255,0.05); }
   .config-row { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; font-size: 14px; flex-wrap: wrap; }
   .config-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 
@@ -325,7 +325,6 @@
       </div>
     </div>
     
-    <!-- 초성 필터 영역 -->
     <div class="filter-chips" id="chosungTokens" style="padding-bottom:5px; min-height:30px;"></div>
     <div class="filter-chips" id="chosung"></div>
 
@@ -550,30 +549,30 @@ document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip')
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
 
-/* ========= 펫잡이 알리미 (가방 감지 로직 수정) ========= */
+/* ========= 펫잡이 알리미 (가방 감지 및 실시간 로그 로직 수정) ========= */
 (function(){
   const POLL_MS = 1500;
   const BAG_COOLDOWN_MS = 60000;
+  // 알림음 URL 설정 (GitHub Pages 기반)
+  const ALARM_SOUND_URL = "https://raw.githubusercontent.com/kkoby-daddy/kkoby-daddy.github.io/kkoby_together/sam_02.wav";
+  const alarmSound = new Audio(ALARM_SOUND_URL);
+  
   let dirHandle = null, currentFileName = null, prevLen = 0, recentLines = [], bagFullState = false, lastBagAlertAt = 0, pollInterval = null;
   const el = (id) => document.getElementById(id);
 
-  function beep() {
+  function playAlarm() {
     if (!el('phSoundEnable').checked) return;
     try {
-      const vol = parseInt(el('phSoundVol').value) / 100;
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = 880; o.start();
-      g.gain.setValueAtTime(0.2 * vol, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
-      o.stop(ctx.currentTime + 0.5);
-    } catch(e) {}
+      alarmSound.volume = parseInt(el('phSoundVol').value) / 100;
+      alarmSound.currentTime = 0;
+      alarmSound.play();
+    } catch(e) { console.error("Audio Play Error:", e); }
   }
 
   function notify(title, body) {
     if ("Notification" in window && Notification.permission === "granted") new Notification(title, { body });
-    beep(); showToast(body);
+    playAlarm(); 
+    showToast(body);
   }
 
   async function readFileText(file) {
@@ -594,7 +593,7 @@ window.addEventListener('scroll', hideTip, true);
 
       if (currentFileName !== latest.name) {
         currentFileName = latest.name;
-        prevLen = 0; // 새 파일이면 처음부터 읽기 위해 0으로 설정
+        prevLen = 0; 
         recentLines = [];
         bagFullState = false;
         el('phCurrentFile').textContent = currentFileName;
@@ -603,48 +602,56 @@ window.addEventListener('scroll', hideTip, true);
       const file = await latest.handle.getFile();
       const text = await readFileText(file);
 
-      // 파일 크기가 줄어들었으면 리셋 (흔하지 않으나 방어코드)
       if (text.length < prevLen) prevLen = 0;
 
-      // 처음 읽는 경우(prevLen === 0) 마지막 30줄 정도만 보여주도록 처리
-      if (prevLen === 0 && text.length > 0) {
-          const allLines = text.split(/\r?\n/).filter(x => x.trim().length > 0);
-          recentLines = allLines.slice(-30);
-          prevLen = text.length;
+      // 처음 연결 시 혹은 파일 변경 시 전체 텍스트에서 마지막 부분을 보여줌
+      if (prevLen === 0) {
+        const allLines = text.split(/\r?\n/).filter(x => x.trim().length > 0);
+        recentLines = allLines.slice(-30);
+        prevLen = text.length;
+        // 초기 로드 시에도 가득 참 상태가 있는지 한 번 체크
+        recentLines.forEach(line => checkBagStatus(line));
       } else if (text.length > prevLen) {
-          // 추가된 부분만 추출
-          const newPart = text.slice(prevLen);
-          prevLen = text.length;
-          const newLines = newPart.split(/\r?\n/).filter(x => x.trim().length > 0);
-          
-          for (const line of newLines) {
-            recentLines.push(line);
-            if (recentLines.length > 50) recentLines.shift();
-
-            // 가방 감지 로직: [0 / 5] 와 같이 남은 칸이 0인 경우 감지
-            const bagMatch = line.match(/가방\s*:\s*\[\s*(\d+)\s*\/\s*(\d+)\s*\]/);
-            if (bagMatch) {
-              const current = parseInt(bagMatch[1]);
-              // 남은 칸수가 0이면 알림 발생
-              if (current === 0) triggerBagAlarm();
-              else bagFullState = false;
-            }
-            
-            // [0]칸 직접 포함 문구 감지
-            if (line.includes("[0]칸")) triggerBagAlarm();
-            else if (line.match(/\[[1-9]\d*\]칸/)) bagFullState = false;
-          }
+        const newPart = text.slice(prevLen);
+        prevLen = text.length;
+        const newLines = newPart.split(/\r?\n/).filter(x => x.trim().length > 0);
+        
+        for (const line of newLines) {
+          recentLines.push(line);
+          if (recentLines.length > 50) recentLines.shift();
+          checkBagStatus(line);
+        }
       }
       
       el('phLogBox').textContent = recentLines.join("\n");
       el('phLogBox').scrollTop = el('phLogBox').scrollHeight;
-    } catch (e) { console.error("Poll Error:", e); }
+    } catch (e) { 
+      console.error("Poll Error:", e);
+      el('phLogBox').textContent = "로그 모니터링 중: " + e.message;
+    }
+  }
+
+  function checkBagStatus(line) {
+    // 가방 감지 정규식 (공백에 유연하게 대응)
+    const bagMatch = line.match(/가방\s*:\s*\[\s*(\d+)\s*\/\s*(\d+)\s*\]/);
+    if (bagMatch) {
+      const current = parseInt(bagMatch[1]);
+      // 남은 칸수가 0이면 알림 발생
+      if (current === 0) triggerBagAlarm();
+      else bagFullState = false;
+    }
+    
+    // 추가적인 감지 키워드
+    if (line.includes("[0]칸")) triggerBagAlarm();
+    else if (line.match(/\[[1-9]\d*\]칸/)) bagFullState = false;
   }
 
   function triggerBagAlarm() {
     const now = Date.now();
+    // bagFullState가 false일 때만 알람 (한 번 감지 후 쿨타임 전까지 재알림 방지)
     if (!bagFullState && (now - lastBagAlertAt > BAG_COOLDOWN_MS)) {
-      bagFullState = true; lastBagAlertAt = now;
+      bagFullState = true; 
+      lastBagAlertAt = now;
       notify("⚠️ 가방 가득 참", "페트 가방이 가득 찼습니다! 확인해 주세요.");
     }
   }
@@ -652,25 +659,38 @@ window.addEventListener('scroll', hideTip, true);
   el('phPickDirBtn').onclick = async () => {
     try {
       dirHandle = await window.showDirectoryPicker();
-      el('phDirInfo').textContent = "연결됨"; el('phStatus').textContent = "감지 중"; el('phStatus').classList.add('active');
+      el('phDirInfo').textContent = "연결됨"; 
+      el('phStatus').textContent = "감지 중"; 
+      el('phStatus').classList.add('active');
       if (pollInterval) clearInterval(pollInterval);
-      // 첫 즉시 실행
+      
+      // 즉시 첫 실행
       await poll();
       pollInterval = setInterval(poll, POLL_MS);
       showToast("로그 폴더 연결 완료");
-    } catch (e) { showToast("로그 폴더 선택 취소"); }
+    } catch (e) { 
+      showToast("로그 폴더 선택 취소"); 
+    }
   };
+
   el('phNotifyBtn').onclick = async () => {
     if (!("Notification" in window)) return showToast("브라우저 알림 미지원");
     const p = await Notification.requestPermission();
     if (p === "granted") showToast("알림 허용 완료");
   };
+
   el('phStopBtn').onclick = () => {
     if (pollInterval) clearInterval(pollInterval);
-    dirHandle = null; el('phDirInfo').textContent = "폴더 미선택"; el('phStatus').textContent = "대기 중"; el('phStatus').classList.remove('active');
-    el('phLogBox').textContent = "로그 폴더를 선택하면 실시간 로그가 여기에 표시됩니다.";
+    dirHandle = null; 
+    el('phDirInfo').textContent = "폴더 미선택"; 
+    el('phStatus').textContent = "대기 중"; 
+    el('phStatus').classList.remove('active');
+    el('phLogBox').textContent = "중지됨. 로그 폴더를 다시 선택해주세요.";
   };
-  el('phSoundVol').oninput = (e) => { el('phSoundVolVal').textContent = e.target.value + "%"; };
+
+  el('phSoundVol').oninput = (e) => { 
+    el('phSoundVolVal').textContent = e.target.value + "%"; 
+  };
 })();
 
 /* ========= UI 제어 (원본 스타일 보존) ========= */
