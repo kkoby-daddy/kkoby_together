@@ -256,21 +256,6 @@
   .rank8-value { font-family: var(--font-tech); color: #fff; font-size: 18px; font-weight: 700; }
   .rank8-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-left: 8px; }
 
-  /* 페트잡이 알림 패널 스타일 */
-  .log-monitor-panel {
-    grid-column: 1 / -1; min-height: auto !important; margin-top: 10px;
-  }
-  .log-controls { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-  .log-info { font-size: 13px; color: var(--text-sub); margin-bottom: 10px; display: flex; gap: 15px; align-items: center; }
-  .log-info span b { color: var(--accent); }
-  .log-box {
-    background: rgba(0,0,0,0.25); border: var(--border); border-radius: 8px;
-    padding: 15px; height: 180px; overflow-y: auto; font-size: 13px;
-    color: #cfe1ff; font-family: 'Consolas', monospace; white-space: pre-wrap; line-height: 1.6;
-  }
-  .log-box::-webkit-scrollbar { width: 6px; }
-  .log-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-
   .toggle-details-btn {
     width: 100%; background: rgba(255,255,255,0.05); border: none;
     color: var(--text-sub); padding: 12px; border-radius: 8px;
@@ -314,7 +299,7 @@
     
     .notice-panel { padding: 15px 20px; }
     
-    .top-nav { position: fixed; justify-content: space-between; padding: 10px 15px; background: rgba(15, 17, 21, 0.95); pointer-events: auto; }
+    .top-nav { position: fixed; justify-content: space-between; padding: 10px 15px; background: rgba(15,17,21,0.95); pointer-events: auto; }
     .nav-controls { background: transparent; border: none; padding: 0; }
     .menu-title-mobile { display: block; font-weight: 700; color: var(--accent); }
   }
@@ -404,6 +389,7 @@
         <div class="stat-grid">
           <div class="stat-col">
             <label>내구력</label>
+            <!-- 브라우저에 따라 ".00"이 생략되는 것을 방지하기 위해 type="text" 적용 -->
             <div class="stat-box readonly"><input type="text" id="s0_hp" readonly placeholder="-"></div>
             <div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_hp" readonly placeholder="-"></div>
           </div>
@@ -516,23 +502,6 @@
         </div>
 
       </section>
-
-      <!-- 펫잡이 로그 모니터링 패널 (통합 추가) -->
-      <section class="panel log-monitor-panel">
-        <h2>LOG MONITORING (가방 0 감지)</h2>
-        <div class="log-controls">
-          <button class="btn-main btn-reset" id="phPickDirBtn" style="padding:10px;">로그 폴더 선택</button>
-          <button class="btn-main btn-reset" id="phNotifyBtn" style="padding:10px;">알림음 허용</button>
-          <button class="btn-main btn-reset" id="phStopBtn" style="padding:10px;">감시 중지</button>
-        </div>
-        <div class="log-info">
-          <span>상태: <b id="phSummaryState">대기중</b></span>
-          <span>파일명: <b id="phCurrentFile">-</b></span>
-          <span style="margin-left:auto; font-size:11px;" id="phLastTick">체크: -</span>
-        </div>
-        <div class="log-box" id="phLogBox">게임 로그 폴더(chat 폴더)를 선택하여 가방 상태를 감시하세요.</div>
-      </section>
-
     </div>
   </main>
 </div>
@@ -828,11 +797,13 @@ function selectPetName(n){
   document.getElementById('selectedPetTitle').textContent = n;
 
   if(row?.s0){
+    // [수정] S급 기준 값들을 강제로 소수점 둘째자리까지 표기 (.toFixed(2) 사용)
     document.getElementById('s0_hp').value = Number(row.s0.hp).toFixed(2);
     document.getElementById('s0_atk').value = Number(row.s0.atk).toFixed(2);
     document.getElementById('s0_def').value = Number(row.s0.def).toFixed(2);
     document.getElementById('s0_agi').value = Number(row.s0.agi).toFixed(2);
     
+    // 관측치(Lv.1 페트 능력치)는 게임 입력값이므로 정수 유지
     document.getElementById('obs_hp').value = Math.floor(row.s0.hp); 
     document.getElementById('obs_atk').value = Math.floor(row.s0.atk);
     document.getElementById('obs_def').value = Math.floor(row.s0.def); 
@@ -841,6 +812,7 @@ function selectPetName(n){
     ['s0_hp','s0_atk','s0_def','s0_agi','obs_hp','obs_atk','obs_def','obs_agi'].forEach(id=>document.getElementById(id).value="");
   }
   if(row?.sg){
+    // [수정] 성장률 역시 소수점 둘째자리 표기
     document.getElementById('sg_hp').value = Number(row.sg.hp).toFixed(2);
     document.getElementById('sg_atk').value = Number(row.sg.atk).toFixed(2);
     document.getElementById('sg_def').value = Number(row.sg.def).toFixed(2);
@@ -969,102 +941,6 @@ document.getElementById('openSidebarBtn').addEventListener('click', openSidebar)
 closeBtn.addEventListener('click', closeSidebar);
 overlay.addEventListener('click', closeSidebar);
 document.getElementById('btnAdmin').onclick = ()=>location.href="./admin.html";
-
-/* ========= 펫잡이 로그 감시 로직 (통합 추가) ========= */
-const BEEP_URL = "https://raw.githubusercontent.com/kkoby-daddy/kkoby_together/main/sam_02.wav";
-let dirHandle = null;
-let currentFileName = null;
-let prevLen = 0;
-let recentLines = [];
-let lastAlertAt = 0;
-let monitorInterval = null;
-let audioObj = new Audio(BEEP_URL);
-
-async function pickDirectory(){
-  if(!window.showDirectoryPicker) return showToast("이 브라우저는 폴더 선택을 지원하지 않습니다. (PC 크롬 권장)");
-  try {
-    dirHandle = await window.showDirectoryPicker();
-    document.getElementById('phSummaryState').textContent = "감시 중";
-    document.getElementById('phLogBox').textContent = "로그 분석을 시작합니다...";
-    startPolling();
-    showToast("로그 폴더가 연결되었습니다.");
-  } catch(e) { console.error(e); }
-}
-
-function startPolling(){
-  if(monitorInterval) clearInterval(monitorInterval);
-  monitorInterval = setInterval(pollLogs, 1500);
-}
-
-async function pollLogs(){
-  if(!dirHandle) return;
-  try {
-    let latest = null;
-    for await (const [name, handle] of dirHandle.entries()){
-      if(handle.kind === 'file' && /^\d{6}\.txt$/.test(name)){
-        if(!latest || name > latest.name) latest = {name, handle};
-      }
-    }
-    if(!latest) return;
-    
-    if(currentFileName !== latest.name){
-      currentFileName = latest.name;
-      prevLen = 0;
-      recentLines = [];
-      document.getElementById('phCurrentFile').textContent = latest.name;
-    }
-
-    const file = await latest.handle.getFile();
-    const buf = await file.arrayBuffer();
-    // 윈드 서버 로그 인코딩: EUC-KR(CP949)
-    const text = new TextDecoder("euc-kr").decode(buf);
-    
-    if(text.length > prevLen){
-      const newPart = text.slice(prevLen);
-      prevLen = text.length;
-      
-      const lines = newPart.split(/\r?\n/).filter(l => l.trim().length > 0);
-      lines.forEach(line => {
-        recentLines.push(line);
-        if(recentLines.length > 50) recentLines.shift();
-        
-        // 가방 가득 참 감지: "가방 : [0 / 5]"
-        if(line.includes('가방 : [0 / 5]')){
-          const now = Date.now();
-          if(now - lastAlertAt > 30000){ // 30초 쿨다운
-            lastAlertAt = now;
-            playAlert();
-            showToast("⚠️ 가방이 가득 찼습니다! [0 / 5]");
-          }
-        }
-      });
-      document.getElementById('phLogBox').textContent = recentLines.join("\n");
-      document.getElementById('phLogBox').scrollTop = document.getElementById('phLogBox').scrollHeight;
-    }
-    document.getElementById('phLastTick').textContent = "체크: " + new Date().toLocaleTimeString();
-  } catch(e) { console.error("로그 읽기 오류", e); }
-}
-
-function playAlert(){
-  audioObj.currentTime = 0;
-  audioObj.play().catch(e => console.warn("오디오 재생 실패:", e));
-  if ("Notification" in window && Notification.permission === "granted") {
-    new Notification("Together 놀이터 알림", { body: "가방이 가득 찼습니다! [0 / 5]" });
-  }
-}
-
-document.getElementById('phPickDirBtn').onclick = pickDirectory;
-document.getElementById('phNotifyBtn').onclick = () => {
-  Notification.requestPermission().then(res => {
-    if(res === 'granted') showToast("브라우저 알림이 허용되었습니다.");
-  });
-  audioObj.play().then(() => { audioObj.pause(); showToast("오디오 출력이 준비되었습니다."); });
-};
-document.getElementById('phStopBtn').onclick = () => {
-  if(monitorInterval) clearInterval(monitorInterval);
-  document.getElementById('phSummaryState').textContent = "중지됨";
-  showToast("감시를 중지했습니다.");
-};
 
 (async function init(){
     await loadGlobalTable();
