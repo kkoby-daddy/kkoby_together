@@ -187,7 +187,7 @@
     font-size: 16px; line-height: 1.8; color: var(--text-sub); 
   }
 
-  /* 펫잡이 알리미 패널 (하단에 위치하도록 정렬) */
+  /* 펫잡이 알리미 패널 (하단 전체 너비) */
   .alarm-panel { grid-column: 1 / -1; min-height: auto; margin-top: 10px; }
   .alarm-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px; }
   .btn-sm { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-main); transition: 0.2s; }
@@ -200,7 +200,7 @@
   .config-row { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; font-size: 14px; flex-wrap: wrap; }
   .config-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 
-  /* 원래 HUD 스타일 원복 */
+  /* HUD 링 스타일 */
   .hud-rings { display: flex; justify-content: space-around; align-items: flex-end; padding: 10px 0 20px; }
   .ring-container { position: relative; width: 90px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .ring-svg { width: 70px; height: 70px; transform: rotate(-90deg); }
@@ -400,7 +400,7 @@
         </div>
       </section>
 
-      <!-- 결과 패널 (원복된 HUD 구조) -->
+      <!-- 결과 패널 -->
       <section class="panel result-panel">
         <h2>ANALYSIS HUD</h2>
         <div class="hud-rings">
@@ -426,7 +426,7 @@
         </div>
       </section>
 
-      <!-- 펫잡이 알리미 패널 (기능 통합 및 정렬) -->
+      <!-- 펫잡이 알리미 패널 (정상 삽입) -->
       <section class="panel alarm-panel">
         <h2>PET HUNTER ALARM (채팅 감지)</h2>
         <div class="alarm-controls">
@@ -462,7 +462,7 @@
 <div id="toastWrap"></div>
 
 <script>
-/* ========= 데이터 로딩 & 유틸 (원복된 pets.json 경로 및 로직) ========= */
+/* ========= 데이터 로딩 & 유틸 (pets.json 및 admin 연결 복구) ========= */
 const REMOTE_PETS = `https://raw.githubusercontent.com/kkoby-daddy/kkoby-daddy.github.io/kkoby_together/data/pets.json`;
 const LOCAL_PETS = "data/pets.json";
 const R8_JSON_CANDIDATES = ["data/guaranteed_rank8.full.json", "data/guaranteed_rank8.min.json"];
@@ -550,9 +550,9 @@ document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip')
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
 
-/* ========= 펫잡이 알리미 (자동 인코딩 및 가방 감지 기능) ========= */
+/* ========= 펫잡이 알리미 (실시간 로그 및 가방 감지 로직) ========= */
 (function(){
-  const POLL_MS = 1200;
+  const POLL_MS = 1500;
   const BAG_COOLDOWN_MS = 60000;
   const BEEP_URL = "sam_02.wav";
   
@@ -579,6 +579,7 @@ window.addEventListener('scroll', hideTip, true);
   function countFFFD(s){ return (s.match(/\uFFFD/g) || []).length; }
   async function readFileText(file) {
     const buf = await file.arrayBuffer();
+    // 자동 인코딩 감지 (UTF-8 vs EUC-KR)
     let tUtf8 = ""; try { tUtf8 = new TextDecoder("utf-8").decode(buf); } catch { tUtf8 = ""; }
     let tK = ""; try { tK = new TextDecoder("euc-kr").decode(buf); } catch { tK = ""; }
     if (!tK) return tUtf8;
@@ -608,8 +609,8 @@ window.addEventListener('scroll', hideTip, true);
       if (text.length < prevLen) prevLen = 0;
 
       if (prevLen === 0) {
-        const all = text.split(/\r?\n/).filter(x => x.trim().length > 0);
-        recentLines = all.slice(-20);
+        const allLines = text.split(/\r?\n/).filter(x => x.trim().length > 0);
+        recentLines = allLines.slice(-30);
         prevLen = text.length;
       } else if (text.length > prevLen) {
         const newPart = text.slice(prevLen);
@@ -631,13 +632,14 @@ window.addEventListener('scroll', hideTip, true);
   }
 
   function checkBagStatus(line) {
+    // 가방 감지 ( [0]칸 또는 가방 : [0/X] 형태 모두 대응 )
     const isFull = line.includes("[0]칸") || line.match(/가방\s*:\s*\[\s*0\s*\/\s*\d+\s*\]/);
     if (isFull) {
       const now = Date.now();
       if (!bagFullState && (now - lastBagAlertAt > BAG_COOLDOWN_MS)) {
         bagFullState = true; 
         lastBagAlertAt = now;
-        notify("⚠️ 가방 감지", "가방이 가득 찼거나 남은 칸이 없습니다!");
+        notify("⚠️ 가방 감지", "페트 가방이 가득 찼습니다! 확인해 주세요.");
       }
     } else if (line.match(/\[[1-9]\d*\]칸/) || line.match(/가방\s*:\s*\[\s*[1-9]\d*\s*\/\s*\d+\s*\]/)) {
       bagFullState = false;
@@ -659,7 +661,7 @@ window.addEventListener('scroll', hideTip, true);
   el('phNotifyBtn').onclick = async () => {
     if (!("Notification" in window)) return showToast("브라우저 알림 미지원");
     const p = await Notification.requestPermission();
-    if (p === "granted") showToast("알림 허용됨");
+    if (p === "granted") showToast("알림 허용 완료");
   };
 
   el('phStopBtn').onclick = () => {
@@ -668,7 +670,7 @@ window.addEventListener('scroll', hideTip, true);
     el('phDirInfo').textContent = "폴더 미선택"; 
     el('phStatus').textContent = "대기 중"; 
     el('phStatus').classList.remove('active');
-    el('phLogBox').textContent = "중지됨.";
+    el('phLogBox').textContent = "중지됨. 로그 폴더를 다시 선택해주세요.";
   };
 
   el('phSoundVol').oninput = (e) => { 
@@ -676,7 +678,7 @@ window.addEventListener('scroll', hideTip, true);
   };
 })();
 
-/* ========= UI 제어 & 분석 엔진 (원복된 HUD 로직 포함) ========= */
+/* ========= UI 제어 & 분석 엔진 (정렬 및 로직 원복) ========= */
 const chosungContainer = document.getElementById('chosung');
 const chosungTokens = document.getElementById('chosungTokens');
 const petListEl = document.getElementById('petList');
@@ -835,7 +837,6 @@ function renderResult(res) {
     const m = res.matches, r8 = res.rank8, sPct = m ? (r8/m*100) : 0, tries = sPct > 0 ? (100/sPct) : Infinity;
     document.getElementById('ringSuccess').style.strokeDasharray = `${sPct.toFixed(1)}, 100`;
     document.getElementById('ringTries').style.strokeDasharray = `${Math.min(100, (sPct > 0 ? (sPct / 100 * 5 * 100) : 0))}, 100`;
-    
     document.getElementById('kpiSuccess').textContent = sPct.toFixed(2) + "%";
     document.getElementById('kpiTries').textContent = isFinite(tries) ? Math.round(tries).toLocaleString() : "∞";
     document.getElementById('kpiAppear').textContent = (m/TOTAL*100).toFixed(4) + "%";
