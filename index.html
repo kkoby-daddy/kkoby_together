@@ -195,7 +195,7 @@
   .status-badge { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.3); color: var(--text-sub); border: 1px solid transparent; }
   .status-badge.active { color: var(--ok); border-color: var(--ok); }
   
-  .log-box { width: 100%; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; font-family: monospace; font-size: 13px; color: #cfe1ff; min-height: 100px; max-height: 150px; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; word-break: break-all; border: 1px solid rgba(255,255,255,0.05); }
+  .log-box { width: 100%; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; font-family: monospace; font-size: 13px; color: #cfe1ff; min-height: 120px; max-height: 180px; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; word-break: break-all; border: 1px solid rgba(255,255,255,0.05); }
   .config-row { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; font-size: 14px; flex-wrap: wrap; }
   .config-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 
@@ -207,7 +207,6 @@
     color: var(--text-main); font-size: 16px; font-weight: 700;
     text-align: center; outline: none; font-family: var(--font-tech); padding: 0;
   }
-  /* 숫자 입력창 화살표 버튼 제거 (정렬 문제 해결) */
   .stat-box input::-webkit-outer-spin-button, .stat-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .stat-box.readonly { opacity: 0.6; background: rgba(0,0,0,0.4); }
   
@@ -265,7 +264,7 @@
   .toggle-details-btn {
     width: 100%; background: rgba(255,255,255,0.05); border: none;
     color: var(--text-sub); padding: 12px; border-radius: 8px;
-    font-size: 13px; cursor: pointer; display: center; align-items: center; gap: 5px;
+    font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
   }
   
   .hidden-details { display: none; margin-top: 10px; animation: slideDown 0.3s ease; }
@@ -326,7 +325,7 @@
       </div>
     </div>
     
-    <!-- 초성 필터 영역 (원본 레이아웃 복구) -->
+    <!-- 초성 필터 영역 -->
     <div class="filter-chips" id="chosungTokens" style="padding-bottom:5px; min-height:30px;"></div>
     <div class="filter-chips" id="chosung"></div>
 
@@ -401,7 +400,7 @@
         </div>
       </section>
 
-      <!-- 결과 패널 (원본 스타일 유지) -->
+      <!-- 결과 패널 -->
       <section class="panel result-panel">
         <h2>ANALYSIS HUD</h2>
         <div class="hud-rings">
@@ -427,7 +426,7 @@
         </div>
       </section>
 
-      <!-- 펫잡이 알리미 패널 (추가됨) -->
+      <!-- 펫잡이 알리미 패널 -->
       <section class="panel alarm-panel">
         <h2>PET HUNTER ALARM (가방 감지)</h2>
         <div class="alarm-controls">
@@ -450,9 +449,9 @@
           </label>
         </div>
 
-        <div class="log-box" id="phLogBox">채팅 로그 실시간 모니터링 영역 (가방 가득 참 감지 시 알림)</div>
+        <div class="log-box" id="phLogBox">로그 폴더를 선택하면 실시간 로그가 여기에 표시됩니다.</div>
         <p style="font-size:11px; color:var(--text-sub); margin-top:8px;">
-          ※ 가방 수치가 가득 찬 경우(예: [5/5] 또는 [0]칸) 웹 알림과 효과음이 발생합니다. PC 브라우저 전용 기능입니다.
+          ※ 가방 수치가 가득 찬 경우(예: [0 / 5] 또는 [0]칸) 웹 알림과 효과음이 발생합니다.
         </p>
       </section>
 
@@ -527,9 +526,8 @@ function getChosung(str){
   return out;
 }
 
-/* 툴팁 로직 (원본 복구) */
+/* 툴팁 로직 */
 const tipEl = document.getElementById('floatingTip');
-let tipTimer = null;
 function hideTip(){ tipEl.classList.remove('show'); }
 function showTip(target){
   const text = target.getAttribute('data-tip'); if(!text){ hideTip(); return; }
@@ -552,7 +550,7 @@ document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip')
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
 
-/* ========= 펫잡이 알리미 (가방 감지 로직) ========= */
+/* ========= 펫잡이 알리미 (가방 감지 로직 수정) ========= */
 (function(){
   const POLL_MS = 1500;
   const BAG_COOLDOWN_MS = 60000;
@@ -580,6 +578,7 @@ window.addEventListener('scroll', hideTip, true);
 
   async function readFileText(file) {
     const buf = await file.arrayBuffer();
+    // StoneAge Together 로그는 대개 EUC-KR 인코딩입니다.
     return new TextDecoder("euc-kr").decode(buf); 
   }
 
@@ -592,30 +591,54 @@ window.addEventListener('scroll', hideTip, true);
         if (!latest || name > latest.name) latest = { name, handle };
       }
       if (!latest) return;
+
       if (currentFileName !== latest.name) {
-        currentFileName = latest.name; prevLen = 0; recentLines = []; bagFullState = false;
+        currentFileName = latest.name;
+        prevLen = 0; // 새 파일이면 처음부터 읽기 위해 0으로 설정
+        recentLines = [];
+        bagFullState = false;
         el('phCurrentFile').textContent = currentFileName;
       }
+
       const file = await latest.handle.getFile();
       const text = await readFileText(file);
+
+      // 파일 크기가 줄어들었으면 리셋 (흔하지 않으나 방어코드)
       if (text.length < prevLen) prevLen = 0;
-      const newPart = text.slice(prevLen); prevLen = text.length;
-      if (!newPart) return;
-      const lines = newPart.split(/\r?\n/).filter(x => x.trim().length > 0);
-      for (const line of lines) {
-        recentLines.push(line); if (recentLines.length > 20) recentLines.shift();
-        const bagMatch = line.match(/가방\s*:\s*\[\s*(\d+)\s*\/\s*(\d+)\s*\]/);
-        if (bagMatch) {
-          const current = parseInt(bagMatch[1]), total = parseInt(bagMatch[2]);
-          if (current >= total && total > 0) triggerBagAlarm();
-          else if (current < total) bagFullState = false;
-        }
-        if (line.includes("[0]칸")) triggerBagAlarm();
-        else if (line.match(/\[[1-9]\d*\]칸/)) bagFullState = false;
+
+      // 처음 읽는 경우(prevLen === 0) 마지막 30줄 정도만 보여주도록 처리
+      if (prevLen === 0 && text.length > 0) {
+          const allLines = text.split(/\r?\n/).filter(x => x.trim().length > 0);
+          recentLines = allLines.slice(-30);
+          prevLen = text.length;
+      } else if (text.length > prevLen) {
+          // 추가된 부분만 추출
+          const newPart = text.slice(prevLen);
+          prevLen = text.length;
+          const newLines = newPart.split(/\r?\n/).filter(x => x.trim().length > 0);
+          
+          for (const line of newLines) {
+            recentLines.push(line);
+            if (recentLines.length > 50) recentLines.shift();
+
+            // 가방 감지 로직: [0 / 5] 와 같이 남은 칸이 0인 경우 감지
+            const bagMatch = line.match(/가방\s*:\s*\[\s*(\d+)\s*\/\s*(\d+)\s*\]/);
+            if (bagMatch) {
+              const current = parseInt(bagMatch[1]);
+              // 남은 칸수가 0이면 알림 발생
+              if (current === 0) triggerBagAlarm();
+              else bagFullState = false;
+            }
+            
+            // [0]칸 직접 포함 문구 감지
+            if (line.includes("[0]칸")) triggerBagAlarm();
+            else if (line.match(/\[[1-9]\d*\]칸/)) bagFullState = false;
+          }
       }
+      
       el('phLogBox').textContent = recentLines.join("\n");
       el('phLogBox').scrollTop = el('phLogBox').scrollHeight;
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Poll Error:", e); }
   }
 
   function triggerBagAlarm() {
@@ -631,6 +654,8 @@ window.addEventListener('scroll', hideTip, true);
       dirHandle = await window.showDirectoryPicker();
       el('phDirInfo').textContent = "연결됨"; el('phStatus').textContent = "감지 중"; el('phStatus').classList.add('active');
       if (pollInterval) clearInterval(pollInterval);
+      // 첫 즉시 실행
+      await poll();
       pollInterval = setInterval(poll, POLL_MS);
       showToast("로그 폴더 연결 완료");
     } catch (e) { showToast("로그 폴더 선택 취소"); }
@@ -643,6 +668,7 @@ window.addEventListener('scroll', hideTip, true);
   el('phStopBtn').onclick = () => {
     if (pollInterval) clearInterval(pollInterval);
     dirHandle = null; el('phDirInfo').textContent = "폴더 미선택"; el('phStatus').textContent = "대기 중"; el('phStatus').classList.remove('active');
+    el('phLogBox').textContent = "로그 폴더를 선택하면 실시간 로그가 여기에 표시됩니다.";
   };
   el('phSoundVol').oninput = (e) => { el('phSoundVolVal').textContent = e.target.value + "%"; };
 })();
@@ -728,7 +754,7 @@ function renderPetList() {
 }
 searchInput.oninput = renderPetList;
 
-/* ========= 분석 엔진 (Decimal.js 기반) ========= */
+/* ========= 분석 엔진 ========= */
 function solveUFromSG_JJYAL(SG, e){
   try{
     if(!SG) return null;
@@ -857,7 +883,7 @@ document.getElementById('openSidebarBtn').onclick = openSidebar;
 document.getElementById('closeSidebarBtn').onclick = closeSidebar;
 overlay.onclick = closeSidebar;
 
-// 휠 조절 기능 (원본 보존)
+// 휠 조절 기능
 function enableWheelStep(el){
   el.addEventListener('wheel',(e)=>{ if(document.activeElement!==el) return; e.preventDefault(); const delta = e.deltaY<0? 1 : -1; el.value = String(parseInt(el.value||"0",10) + delta); }, {passive:false});
 }
@@ -871,7 +897,7 @@ document.addEventListener('click', (e) => {
 (async function init(){
     await loadGlobalTable();
     await loadRank8Map();
-    renderChosungTokens(); // 페이지 로드 시 '선택한 초성 :' 문구 표시
+    renderChosungTokens();
     renderPetList();
 })();
 </script>
