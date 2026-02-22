@@ -22,13 +22,6 @@
     --font-main: 'Noto Sans KR', sans-serif;
     --font-tech: 'Orbit', sans-serif;
     --radius: 16px;
-
-    /* HUD 전용 변수 */
-    --ring-size: 70px;
-    --ring-thickness: 8px;
-    --hud-speed: 120;
-    --glow: 14px;
-    --ring-bg: rgba(255, 255, 255, 0.1);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -164,6 +157,7 @@
   }
   .admin-btn:hover { color: var(--accent); transform: scale(1.1); text-shadow: 0 0 8px var(--accent); }
 
+  /* 대시보드 레이아웃 정렬 원복 */
   .dashboard {
     padding: 70px 30px 40px;
     max-width: 1400px; margin: 0 auto;
@@ -193,7 +187,7 @@
     font-size: 16px; line-height: 1.8; color: var(--text-sub); 
   }
 
-  /* 펫잡이 알리미 패널 스타일 */
+  /* 펫잡이 알리미 패널 (하단에 위치하도록 정렬) */
   .alarm-panel { grid-column: 1 / -1; min-height: auto; margin-top: 10px; }
   .alarm-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px; }
   .btn-sm { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--text-main); transition: 0.2s; }
@@ -206,23 +200,16 @@
   .config-row { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; font-size: 14px; flex-wrap: wrap; }
   .config-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 
-  /* HUD 링 스타일 복원 */
-  .hud-rings { display: flex; justify-content: space-around; align-items: center; padding: 20px 0; }
+  /* 원래 HUD 스타일 원복 */
+  .hud-rings { display: flex; justify-content: space-around; align-items: flex-end; padding: 10px 0 20px; }
   .ring-container { position: relative; width: 90px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .ringwrap { position: relative; width: var(--ring-size); height: var(--ring-size); }
-  .ringwrap svg { display: block; width: 100%; height: 100%; }
-  .track { stroke: var(--ring-bg); fill: none; stroke-width: 10; }
-  .fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dasharray 0.3s ease; }
-  
-  .hud { filter: drop-shadow(0 0 var(--glow) rgba(160,200,255,.6)); }
-  .tail, .core { stroke-linecap: round; opacity: 1; fill: none; }
-  .flare { fill: #fff; opacity: .95; }
-
-  .ring-label { font-size: 11px; color: var(--text-sub); margin-top: 5px; }
+  .ring-svg { width: 70px; height: 70px; transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 8; }
+  .ring-val { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; transition: stroke-dasharray 1s ease; }
+  .ring-label { font-size: 11px; color: var(--text-sub); }
   .ring-text {
     position: absolute; top: 26px; left: 50%; transform: translateX(-50%);
-    font-family: var(--font-tech); font-size: 14px; font-weight: 700; color: var(--text-main);
-    z-index: 5; pointer-events: none;
+    font-family: var(--font-tech); font-size: 15px; font-weight: 700; color: var(--text-main);
   }
 
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
@@ -413,47 +400,19 @@
         </div>
       </section>
 
-      <!-- 결과 패널 (HUD 링 구조 복원) -->
+      <!-- 결과 패널 (원복된 HUD 구조) -->
       <section class="panel result-panel">
         <h2>ANALYSIS HUD</h2>
         <div class="hud-rings">
-          <!-- 성공 확률 링 -->
           <div class="ring-container">
-            <div class="ringwrap">
-              <svg viewBox="0 0 100 100">
-                <defs>
-                  <circle id="succPath" cx="50" cy="50" r="45"/>
-                  <mask id="succMask">
-                    <circle id="succMaskStroke" cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="10" transform="rotate(-90 50 50)" stroke-dasharray="0 283" />
-                  </mask>
-                  <linearGradient id="hudGradOuter" x1="0" y1="0.5" x2="1" y2="0.5"><stop offset="0%" stop-color="#a8ddff"/><stop offset="50%" stop-color="#e3f3ff"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
-                  <linearGradient id="hudGradInner" x1="0" y1="0.5" x2="1" y2="0.5"><stop offset="0%" stop-color="#e6f6ff"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
-                </defs>
-                <use href="#succPath" class="track" transform="rotate(-90 50 50)"/>
-                <use id="succFill" href="#succPath" class="fill" stroke="var(--accent)" transform="rotate(-90 50 50)" stroke-dasharray="0 283"/>
-                <g id="succHUD" class="hud" mask="url(#succMask)" style="opacity:0">
-                  <path id="succTail" class="tail" stroke="url(#hudGradOuter)" stroke-width="10"/>
-                  <path id="succCore" class="core" stroke="url(#hudGradInner)" stroke-width="6"/>
-                  <circle id="succFlare" class="flare" r="3" cx="50" cy="5"/>
-                </g>
-              </svg>
-            </div>
+            <svg class="ring-svg" viewBox="0 0 36 36"><path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path id="ringSuccess" class="ring-val" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>
             <div class="ring-text" id="kpiSuccess">0%</div><span class="ring-label">8등급 확률</span>
           </div>
-
-          <!-- 시도 횟수 링 -->
           <div class="ring-container">
-            <div class="ringwrap">
-              <svg viewBox="0 0 100 100">
-                <circle id="trPath" cx="50" cy="50" r="45" fill="none"/>
-                <use href="#trPath" class="track" transform="rotate(-90 50 50)"/>
-                <use id="trFill" href="#trPath" class="fill" stroke="#ffb300" transform="rotate(-90 50 50)" stroke-dasharray="0 283"/>
-              </svg>
-            </div>
+            <svg class="ring-svg" viewBox="0 0 36 36"><path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path id="ringTries" class="ring-val" style="stroke:#ffb300" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>
             <div class="ring-text" id="kpiTries">-</div><span class="ring-label">시도 횟수</span>
           </div>
         </div>
-        
         <div class="stat-summary">
           <div class="sum-item"><span class="sum-label">출현 확률</span><span class="sum-val" id="kpiAppear" style="font-size:16px">-</span></div>
           <div class="sum-item"><span class="sum-label">총 경우의 수</span><span class="sum-val" id="totMatches">-</span></div>
@@ -467,7 +426,7 @@
         </div>
       </section>
 
-      <!-- 펫잡이 알리미 패널 -->
+      <!-- 펫잡이 알리미 패널 (기능 통합 및 정렬) -->
       <section class="panel alarm-panel">
         <h2>PET HUNTER ALARM (채팅 감지)</h2>
         <div class="alarm-controls">
@@ -503,7 +462,7 @@
 <div id="toastWrap"></div>
 
 <script>
-/* ========= 데이터 로딩 & 유틸 ========= */
+/* ========= 데이터 로딩 & 유틸 (원복된 pets.json 경로 및 로직) ========= */
 const REMOTE_PETS = `https://raw.githubusercontent.com/kkoby-daddy/kkoby-daddy.github.io/kkoby_together/data/pets.json`;
 const LOCAL_PETS = "data/pets.json";
 const R8_JSON_CANDIDATES = ["data/guaranteed_rank8.full.json", "data/guaranteed_rank8.min.json"];
@@ -591,65 +550,15 @@ document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip')
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
 
-/* ========= HUD 링 제어 로직 복원 (성공링 애니메이션) ========= */
-function polarToCartesian(cx, cy, r, deg) {
-  const rad = (deg - 90) * Math.PI / 180.0;
-  return { x: cx + (r * Math.cos(rad)), y: cy + (r * Math.sin(rad)) };
-}
-function describeArc(x, y, radius, startAngle, endAngle) {
-  const start = polarToCartesian(x, y, radius, endAngle);
-  const end = polarToCartesian(x, y, radius, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-  return ["M", start.x, start.y, "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y].join(" ");
-}
-
-const HUD_RING = {
-  head: 0, run: false, lastTs: 0,
-  tick: function(ts) {
-    if (!this.run) return;
-    if (!this.lastTs) this.lastTs = ts;
-    const dt = (ts - this.lastTs) / 1000;
-    this.lastTs = ts;
-    const pxPerSec = 120;
-    const circum = 2 * Math.PI * 45;
-    const degPerSec = (pxPerSec / circum) * 360;
-    this.head = (this.head + degPerSec * dt) % 360;
-    const tail = document.getElementById('succTail');
-    const core = document.getElementById('succCore');
-    const flare = document.getElementById('succFlare');
-    if (tail) tail.setAttribute('d', describeArc(50, 50, 45, this.head - 80, this.head));
-    if (core) core.setAttribute('d', describeArc(50, 50, 45, this.head - 35, this.head));
-    if (flare) {
-      const pos = polarToCartesian(50, 50, 45, this.head);
-      flare.setAttribute('cx', pos.x); flare.setAttribute('cy', pos.y);
-    }
-    requestAnimationFrame((t) => this.tick(t));
-  },
-  update: function(f) {
-    const fill = document.getElementById('succFill');
-    const mask = document.getElementById('succMaskStroke');
-    const hud = document.getElementById('succHUD');
-    const circum = 2 * Math.PI * 45;
-    const offset = circum * (1 - f);
-    if (fill) fill.setAttribute('stroke-dasharray', `${f * circum} ${circum}`);
-    if (mask) mask.setAttribute('stroke-dasharray', `${f * circum} ${circum}`);
-    if (f > 0) {
-      if (hud) hud.style.opacity = 1;
-      if (!this.run) { this.run = true; requestAnimationFrame((t) => this.tick(t)); }
-    } else {
-      if (hud) hud.style.opacity = 0;
-      this.run = false;
-    }
-  }
-};
-
-/* ========= 펫잡이 알리미 (강화된 로직 통합) ========= */
+/* ========= 펫잡이 알리미 (자동 인코딩 및 가방 감지 기능) ========= */
 (function(){
   const POLL_MS = 1200;
   const BAG_COOLDOWN_MS = 60000;
   const BEEP_URL = "sam_02.wav";
+  
   let dirHandle = null, currentFileName = null, prevLen = 0, recentLines = [], bagFullState = false, lastBagAlertAt = 0, pollInterval = null;
   const el = (id) => document.getElementById(id);
+  
   let alarmAudio = new Audio(BEEP_URL);
 
   function playAlarm() {
@@ -686,14 +595,18 @@ const HUD_RING = {
         if (!latest || name > latest.name) latest = { name, handle };
       }
       if (!latest) return;
+
       if (currentFileName !== latest.name) {
         currentFileName = latest.name;
         prevLen = 0; recentLines = []; bagFullState = false;
         el('phCurrentFile').textContent = currentFileName;
       }
+
       const file = await latest.handle.getFile();
       const text = await readFileText(file);
+
       if (text.length < prevLen) prevLen = 0;
+
       if (prevLen === 0) {
         const all = text.split(/\r?\n/).filter(x => x.trim().length > 0);
         recentLines = all.slice(-20);
@@ -702,15 +615,19 @@ const HUD_RING = {
         const newPart = text.slice(prevLen);
         prevLen = text.length;
         const newLines = newPart.split(/\r?\n/).filter(x => x.trim().length > 0);
+        
         for (const line of newLines) {
           recentLines.push(line);
           if (recentLines.length > 50) recentLines.shift();
           checkBagStatus(line);
         }
       }
+      
       el('phLogBox').textContent = recentLines.join("\n");
       el('phLogBox').scrollTop = el('phLogBox').scrollHeight;
-    } catch (e) { console.error("Poll Error:", e); }
+    } catch (e) { 
+      console.error("Poll Error:", e);
+    }
   }
 
   function checkBagStatus(line) {
@@ -730,28 +647,36 @@ const HUD_RING = {
   el('phPickDirBtn').onclick = async () => {
     try {
       dirHandle = await window.showDirectoryPicker();
-      el('phDirInfo').textContent = "연결됨"; el('phStatus').textContent = "감지 중"; 
+      el('phDirInfo').textContent = "연결됨"; 
+      el('phStatus').textContent = "감지 중"; 
       el('phStatus').classList.add('active');
       if (pollInterval) clearInterval(pollInterval);
       pollInterval = setInterval(poll, POLL_MS);
       showToast("로그 폴더 연결 완료");
     } catch (e) { showToast("폴더 선택 취소"); }
   };
+
   el('phNotifyBtn').onclick = async () => {
-    if (!("Notification" in window)) return showToast("알림 미지원");
+    if (!("Notification" in window)) return showToast("브라우저 알림 미지원");
     const p = await Notification.requestPermission();
     if (p === "granted") showToast("알림 허용됨");
   };
+
   el('phStopBtn').onclick = () => {
     if (pollInterval) clearInterval(pollInterval);
-    dirHandle = null; el('phDirInfo').textContent = "폴더 미선택"; 
-    el('phStatus').textContent = "대기 중"; el('phStatus').classList.remove('active');
+    dirHandle = null; 
+    el('phDirInfo').textContent = "폴더 미선택"; 
+    el('phStatus').textContent = "대기 중"; 
+    el('phStatus').classList.remove('active');
     el('phLogBox').textContent = "중지됨.";
   };
-  el('phSoundVol').oninput = (e) => { el('phSoundVolVal').textContent = e.target.value + "%"; };
+
+  el('phSoundVol').oninput = (e) => { 
+    el('phSoundVolVal').textContent = e.target.value + "%"; 
+  };
 })();
 
-/* ========= 기존 UI 제어 & 분석 엔진 ========= */
+/* ========= UI 제어 & 분석 엔진 (원복된 HUD 로직 포함) ========= */
 const chosungContainer = document.getElementById('chosung');
 const chosungTokens = document.getElementById('chosungTokens');
 const petListEl = document.getElementById('petList');
@@ -773,6 +698,7 @@ function renderChosungTokens(){
   clearBtn.onclick = () => { currentChosung = ""; renderPetList(); renderChosungTokens(); Array.from(chosungContainer.children).forEach(el=>el.classList.remove('active')); };
   chosungTokens.appendChild(clearBtn);
 }
+
 CHO_BUTTONS.forEach(c => {
   const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = c;
   chip.addEventListener('click', () => {
@@ -838,6 +764,7 @@ function solveUFromSG_JJYAL(SG, e){
     return { u:{hp:+A[0][3].minus(2.5).round(), atk:+A[1][3].minus(2.5).round(), def:+A[2][3].minus(2.5).round(), agi:+d}, e };
   }catch(e){ return null; }
 }
+
 function inferKU_JJYAL(S0, SG){
   const S0int = S0.map(Math.floor); let best=null;
   for(let e=435; e<=575; e+=5){
@@ -852,6 +779,7 @@ function inferKU_JJYAL(S0, SG){
   }
   return best;
 }
+
 function enumerate_jjyal(pku, obs){
   const k = new Decimal(pku.k), fac = k.div(100), u = pku.u;
   let matches = 0, r8 = 0, dist = {};
@@ -882,6 +810,7 @@ function selectPetName(n){
   }
   resetResult();
 }
+
 document.getElementById('btnCalc').onclick = () => {
   if(!selectedName) return showToast("페트를 먼저 선택하세요!");
   const obs = ['hp','atk','def','agi'].map(s => parseInt(document.getElementById('obs_'+s).value));
@@ -894,22 +823,19 @@ document.getElementById('btnCalc').onclick = () => {
   }
   renderResult(enumerate_jjyal({k,u}, obs));
 };
+
 function resetResult() {
     document.getElementById('kpiSuccess').textContent = "0%"; document.getElementById('kpiTries').textContent = "-";
-    HUD_RING.update(0);
-    const trFill = document.getElementById('trFill'); if(trFill) trFill.setAttribute('stroke-dasharray', `0 283`);
+    document.getElementById('ringSuccess').style.strokeDasharray = "0, 100"; document.getElementById('ringTries').style.strokeDasharray = "0, 100";
     document.getElementById('kpiAppear').textContent = "-"; document.getElementById('totMatches').textContent = "-"; document.getElementById('rank8Matches').textContent = "-";
     document.getElementById('dist').innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px;">분석 대기 중...</div>';
 }
+
 function renderResult(res) {
     const m = res.matches, r8 = res.rank8, sPct = m ? (r8/m*100) : 0, tries = sPct > 0 ? (100/sPct) : Infinity;
-    HUD_RING.update(sPct / 100);
-    const trFill = document.getElementById('trFill');
-    if(trFill) {
-      const f = Math.min(1, sPct > 0 ? (sPct / 100 * 5) : 0); // 시도 횟수는 상대적 표시
-      trFill.setAttribute('stroke-dasharray', `${f * 283} 283`);
-      trFill.setAttribute('stroke', sPct >= 20 ? 'var(--ok)' : (sPct >= 5 ? 'var(--warn)' : 'var(--bad)'));
-    }
+    document.getElementById('ringSuccess').style.strokeDasharray = `${sPct.toFixed(1)}, 100`;
+    document.getElementById('ringTries').style.strokeDasharray = `${Math.min(100, (sPct > 0 ? (sPct / 100 * 5 * 100) : 0))}, 100`;
+    
     document.getElementById('kpiSuccess').textContent = sPct.toFixed(2) + "%";
     document.getElementById('kpiTries').textContent = isFinite(tries) ? Math.round(tries).toLocaleString() : "∞";
     document.getElementById('kpiAppear').textContent = (m/TOTAL*100).toFixed(4) + "%";
@@ -928,13 +854,16 @@ function renderResult(res) {
     }
     document.getElementById('dist').innerHTML = html;
 }
+
 function toggleDetails(btn){
   const d = document.getElementById('hiddenDetails');
   if(d.classList.contains('open')){ d.classList.remove('open'); btn.textContent="▼ 나머지 등급 보기"; }
   else { d.classList.add('open'); btn.textContent="▲ 접기"; }
 }
+
 document.getElementById('btnReset').onclick = () => { selectPetName(""); resetResult(); };
 document.getElementById('btnAdmin').onclick = () => { location.href = "./admin.html"; };
+
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebarOverlay');
 function openSidebar() { sidebar.classList.add('active'); overlay.classList.add('active'); document.getElementById('closeSidebarBtn').style.display='block'; }
@@ -942,6 +871,7 @@ function closeSidebar() { sidebar.classList.remove('active'); overlay.classList.
 document.getElementById('openSidebarBtn').onclick = openSidebar;
 document.getElementById('closeSidebarBtn').onclick = closeSidebar;
 overlay.onclick = closeSidebar;
+
 function enableWheelStep(el){
   el.addEventListener('wheel',(e)=>{ if(document.activeElement!==el) return; e.preventDefault(); const delta = e.deltaY<0? 1 : -1; el.value = String(parseInt(el.value||"0",10) + delta); }, {passive:false});
 }
@@ -951,7 +881,13 @@ document.addEventListener('click', (e) => {
     const input = document.getElementById(btn.dataset.target);
     if(input) input.value = (parseInt(input.value||0) + parseInt(btn.dataset.delta));
 });
-(async function init(){ await loadGlobalTable(); await loadRank8Map(); renderChosungTokens(); renderPetList(); })();
+
+(async function init(){
+    await loadGlobalTable();
+    await loadRank8Map();
+    renderChosungTokens();
+    renderPetList();
+})();
 </script>
 </body>
 </html>
