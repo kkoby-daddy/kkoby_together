@@ -84,7 +84,7 @@
   .search-box input:focus { border-color: var(--accent); }
 
   .filter-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 15px; flex-shrink: 0; }
-  #chosungTokens { padding: 0 20px 10px; min-height: 38px; align-items: center; }
+  #chosungTokens { padding: 0 20px 10px; min-height: 30px; align-items: center; }
   
   .chip {
     font-size: 12px; padding: 6px 10px; background: rgba(255,255,255,0.05);
@@ -265,7 +265,7 @@
   .toggle-details-btn {
     width: 100%; background: rgba(255,255,255,0.05); border: none;
     color: var(--text-sub); padding: 12px; border-radius: 8px;
-    font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
+    font-size: 13px; cursor: pointer; display: center; align-items: center; gap: 5px;
   }
   
   .hidden-details { display: none; margin-top: 10px; animation: slideDown 0.3s ease; }
@@ -326,6 +326,7 @@
       </div>
     </div>
     
+    <!-- 초성 필터 영역 (원본 레이아웃 복구) -->
     <div class="filter-chips" id="chosungTokens" style="padding-bottom:5px; min-height:30px;"></div>
     <div class="filter-chips" id="chosung"></div>
 
@@ -659,19 +660,31 @@ function renderChosungTokens(){
   chosungTokens.innerHTML = "";
   const label = document.createElement('div'); label.className = 'chip label'; label.textContent = "선택한 초성 :";
   chosungTokens.appendChild(label);
+  
   if(!currentChosung) return;
   for(const ch of currentChosung){
     const t = document.createElement('div'); t.className = 'chip active'; t.textContent = ch;
     chosungTokens.appendChild(t);
   }
   const clearBtn = document.createElement('div'); clearBtn.className = 'chip'; clearBtn.textContent = '↺';
-  clearBtn.onclick = () => { currentChosung = ""; renderPetList(); renderChosungTokens(); };
+  clearBtn.onclick = () => { 
+    currentChosung = ""; 
+    renderPetList(); 
+    renderChosungTokens(); 
+    Array.from(chosungContainer.children).forEach(el=>el.classList.remove('active'));
+  };
   chosungTokens.appendChild(clearBtn);
 }
 
 CHO_BUTTONS.forEach(c => {
   const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = c;
-  chip.onclick = () => { currentChosung += c; renderPetList(); renderChosungTokens(); };
+  chip.addEventListener('click', () => {
+    currentChosung += c; 
+    renderPetList(); 
+    renderChosungTokens();
+    Array.from(chosungContainer.children).forEach(el=>el.classList.remove('active')); 
+    chip.classList.add('active');
+  });
   chosungContainer.appendChild(chip);
 });
 
@@ -858,6 +871,7 @@ document.addEventListener('click', (e) => {
 (async function init(){
     await loadGlobalTable();
     await loadRank8Map();
+    renderChosungTokens(); // 페이지 로드 시 '선택한 초성 :' 문구 표시
     renderPetList();
 })();
 </script>
