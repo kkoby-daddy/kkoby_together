@@ -22,6 +22,13 @@
     --font-main: 'Noto Sans KR', sans-serif;
     --font-tech: 'Orbit', sans-serif;
     --radius: 16px;
+
+    /* HUD 전용 변수 */
+    --ring-size: 70px;
+    --ring-thickness: 8px;
+    --hud-speed: 120;
+    --glow: 14px;
+    --ring-bg: rgba(255, 255, 255, 0.1);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -195,9 +202,28 @@
   .status-badge { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: rgba(0,0,0,0.3); color: var(--text-sub); border: 1px solid transparent; }
   .status-badge.active { color: var(--ok); border-color: var(--ok); }
   
-  .log-box { width: 100%; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; font-family: monospace; font-size: 13px; color: #cfe1ff; min-height: 120px; max-height: 200px; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; word-break: break-all; border: 1px solid rgba(255,255,255,0.05); }
+  .log-box { width: 100%; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; font-family: monospace; font-size: 13px; color: #cfe1ff; min-height: 150px; max-height: 250px; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; word-break: break-all; border: 1px solid rgba(255,255,255,0.05); }
   .config-row { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; font-size: 14px; flex-wrap: wrap; }
   .config-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+
+  /* HUD 링 스타일 복원 */
+  .hud-rings { display: flex; justify-content: space-around; align-items: center; padding: 20px 0; }
+  .ring-container { position: relative; width: 90px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .ringwrap { position: relative; width: var(--ring-size); height: var(--ring-size); }
+  .ringwrap svg { display: block; width: 100%; height: 100%; }
+  .track { stroke: var(--ring-bg); fill: none; stroke-width: 10; }
+  .fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dasharray 0.3s ease; }
+  
+  .hud { filter: drop-shadow(0 0 var(--glow) rgba(160,200,255,.6)); }
+  .tail, .core { stroke-linecap: round; opacity: 1; fill: none; }
+  .flare { fill: #fff; opacity: .95; }
+
+  .ring-label { font-size: 11px; color: var(--text-sub); margin-top: 5px; }
+  .ring-text {
+    position: absolute; top: 26px; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-tech); font-size: 14px; font-weight: 700; color: var(--text-main);
+    z-index: 5; pointer-events: none;
+  }
 
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
   .stat-col label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; text-align: center; }
@@ -230,18 +256,6 @@
   }
   .btn-calc { background: var(--accent); color: #000; }
   .btn-reset { background: rgba(255,255,255,0.1); color: var(--text-main); }
-
-  /* 결과 패널 HUD */
-  .hud-rings { display: flex; justify-content: space-around; align-items: flex-end; padding: 10px 0 20px; }
-  .ring-container { position: relative; width: 90px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .ring-svg { width: 70px; height: 70px; transform: rotate(-90deg); }
-  .ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
-  .ring-val { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; transition: stroke-dasharray 1s ease; }
-  .ring-label { font-size: 11px; color: var(--text-sub); }
-  .ring-text {
-    position: absolute; top: 26px; left: 50%; transform: translateX(-50%);
-    font-family: var(--font-tech); font-size: 15px; font-weight: 700; color: var(--text-main);
-  }
 
   .stat-summary {
     background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px;
@@ -399,19 +413,47 @@
         </div>
       </section>
 
-      <!-- 결과 패널 -->
+      <!-- 결과 패널 (HUD 링 구조 복원) -->
       <section class="panel result-panel">
         <h2>ANALYSIS HUD</h2>
         <div class="hud-rings">
+          <!-- 성공 확률 링 -->
           <div class="ring-container">
-            <svg class="ring-svg" viewBox="0 0 36 36"><path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path id="ringSuccess" class="ring-val" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>
+            <div class="ringwrap">
+              <svg viewBox="0 0 100 100">
+                <defs>
+                  <circle id="succPath" cx="50" cy="50" r="45"/>
+                  <mask id="succMask">
+                    <circle id="succMaskStroke" cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="10" transform="rotate(-90 50 50)" stroke-dasharray="0 283" />
+                  </mask>
+                  <linearGradient id="hudGradOuter" x1="0" y1="0.5" x2="1" y2="0.5"><stop offset="0%" stop-color="#a8ddff"/><stop offset="50%" stop-color="#e3f3ff"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
+                  <linearGradient id="hudGradInner" x1="0" y1="0.5" x2="1" y2="0.5"><stop offset="0%" stop-color="#e6f6ff"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>
+                </defs>
+                <use href="#succPath" class="track" transform="rotate(-90 50 50)"/>
+                <use id="succFill" href="#succPath" class="fill" stroke="var(--accent)" transform="rotate(-90 50 50)" stroke-dasharray="0 283"/>
+                <g id="succHUD" class="hud" mask="url(#succMask)" style="opacity:0">
+                  <path id="succTail" class="tail" stroke="url(#hudGradOuter)" stroke-width="10"/>
+                  <path id="succCore" class="core" stroke="url(#hudGradInner)" stroke-width="6"/>
+                  <circle id="succFlare" class="flare" r="3" cx="50" cy="5"/>
+                </g>
+              </svg>
+            </div>
             <div class="ring-text" id="kpiSuccess">0%</div><span class="ring-label">8등급 확률</span>
           </div>
+
+          <!-- 시도 횟수 링 -->
           <div class="ring-container">
-            <svg class="ring-svg" viewBox="0 0 36 36"><path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path id="ringTries" class="ring-val" style="stroke:#ffb300" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>
+            <div class="ringwrap">
+              <svg viewBox="0 0 100 100">
+                <circle id="trPath" cx="50" cy="50" r="45" fill="none"/>
+                <use href="#trPath" class="track" transform="rotate(-90 50 50)"/>
+                <use id="trFill" href="#trPath" class="fill" stroke="#ffb300" transform="rotate(-90 50 50)" stroke-dasharray="0 283"/>
+              </svg>
+            </div>
             <div class="ring-text" id="kpiTries">-</div><span class="ring-label">시도 횟수</span>
           </div>
         </div>
+        
         <div class="stat-summary">
           <div class="sum-item"><span class="sum-label">출현 확률</span><span class="sum-val" id="kpiAppear" style="font-size:16px">-</span></div>
           <div class="sum-item"><span class="sum-label">총 경우의 수</span><span class="sum-val" id="totMatches">-</span></div>
@@ -427,7 +469,7 @@
 
       <!-- 펫잡이 알리미 패널 -->
       <section class="panel alarm-panel">
-        <h2>PET HUNTER ALARM (가방 감지)</h2>
+        <h2>PET HUNTER ALARM (채팅 감지)</h2>
         <div class="alarm-controls">
           <button class="btn-sm primary" id="phPickDirBtn">로그 폴더 선택</button>
           <button class="btn-sm" id="phNotifyBtn">알림 권한 허용</button>
@@ -448,9 +490,9 @@
           </label>
         </div>
 
-        <div class="log-box" id="phLogBox">로그 폴더를 선택하면 실시간 로그가 여기에 표시됩니다.</div>
+        <div class="log-box" id="phLogBox">로그 폴더를 선택하면 실시간 채팅 로그가 여기에 표시됩니다.</div>
         <p style="font-size:11px; color:var(--text-sub); margin-top:8px;">
-          ※ 가방 수치가 가득 찬 경우(예: [0 / 5] 또는 [0]칸) 웹 알림과 효과음이 발생합니다.
+          ※ 가방 칸수가 [0]칸이거나 가득 찼다는 메시지 감지 시 웹 알림과 소리(sam_02.wav)가 발생합니다.
         </p>
       </section>
 
@@ -549,23 +591,73 @@ document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip')
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
 
-/* ========= 펫잡이 알리미 (가방 감지 및 실시간 로그 로직 수정) ========= */
+/* ========= HUD 링 제어 로직 복원 (성공링 애니메이션) ========= */
+function polarToCartesian(cx, cy, r, deg) {
+  const rad = (deg - 90) * Math.PI / 180.0;
+  return { x: cx + (r * Math.cos(rad)), y: cy + (r * Math.sin(rad)) };
+}
+function describeArc(x, y, radius, startAngle, endAngle) {
+  const start = polarToCartesian(x, y, radius, endAngle);
+  const end = polarToCartesian(x, y, radius, startAngle);
+  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+  return ["M", start.x, start.y, "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y].join(" ");
+}
+
+const HUD_RING = {
+  head: 0, run: false, lastTs: 0,
+  tick: function(ts) {
+    if (!this.run) return;
+    if (!this.lastTs) this.lastTs = ts;
+    const dt = (ts - this.lastTs) / 1000;
+    this.lastTs = ts;
+    const pxPerSec = 120;
+    const circum = 2 * Math.PI * 45;
+    const degPerSec = (pxPerSec / circum) * 360;
+    this.head = (this.head + degPerSec * dt) % 360;
+    const tail = document.getElementById('succTail');
+    const core = document.getElementById('succCore');
+    const flare = document.getElementById('succFlare');
+    if (tail) tail.setAttribute('d', describeArc(50, 50, 45, this.head - 80, this.head));
+    if (core) core.setAttribute('d', describeArc(50, 50, 45, this.head - 35, this.head));
+    if (flare) {
+      const pos = polarToCartesian(50, 50, 45, this.head);
+      flare.setAttribute('cx', pos.x); flare.setAttribute('cy', pos.y);
+    }
+    requestAnimationFrame((t) => this.tick(t));
+  },
+  update: function(f) {
+    const fill = document.getElementById('succFill');
+    const mask = document.getElementById('succMaskStroke');
+    const hud = document.getElementById('succHUD');
+    const circum = 2 * Math.PI * 45;
+    const offset = circum * (1 - f);
+    if (fill) fill.setAttribute('stroke-dasharray', `${f * circum} ${circum}`);
+    if (mask) mask.setAttribute('stroke-dasharray', `${f * circum} ${circum}`);
+    if (f > 0) {
+      if (hud) hud.style.opacity = 1;
+      if (!this.run) { this.run = true; requestAnimationFrame((t) => this.tick(t)); }
+    } else {
+      if (hud) hud.style.opacity = 0;
+      this.run = false;
+    }
+  }
+};
+
+/* ========= 펫잡이 알리미 (강화된 로직 통합) ========= */
 (function(){
-  const POLL_MS = 1500;
+  const POLL_MS = 1200;
   const BAG_COOLDOWN_MS = 60000;
-  // 알림음 URL 설정 (GitHub Pages 기반)
-  const ALARM_SOUND_URL = "https://raw.githubusercontent.com/kkoby-daddy/kkoby-daddy.github.io/kkoby_together/sam_02.wav";
-  const alarmSound = new Audio(ALARM_SOUND_URL);
-  
+  const BEEP_URL = "sam_02.wav";
   let dirHandle = null, currentFileName = null, prevLen = 0, recentLines = [], bagFullState = false, lastBagAlertAt = 0, pollInterval = null;
   const el = (id) => document.getElementById(id);
+  let alarmAudio = new Audio(BEEP_URL);
 
   function playAlarm() {
     if (!el('phSoundEnable').checked) return;
     try {
-      alarmSound.volume = parseInt(el('phSoundVol').value) / 100;
-      alarmSound.currentTime = 0;
-      alarmSound.play();
+      alarmAudio.volume = parseInt(el('phSoundVol').value) / 100;
+      alarmAudio.currentTime = 0;
+      alarmAudio.play();
     } catch(e) { console.error("Audio Play Error:", e); }
   }
 
@@ -575,10 +667,14 @@ window.addEventListener('scroll', hideTip, true);
     showToast(body);
   }
 
+  function countFFFD(s){ return (s.match(/\uFFFD/g) || []).length; }
   async function readFileText(file) {
     const buf = await file.arrayBuffer();
-    // StoneAge Together 로그는 대개 EUC-KR 인코딩입니다.
-    return new TextDecoder("euc-kr").decode(buf); 
+    let tUtf8 = ""; try { tUtf8 = new TextDecoder("utf-8").decode(buf); } catch { tUtf8 = ""; }
+    let tK = ""; try { tK = new TextDecoder("euc-kr").decode(buf); } catch { tK = ""; }
+    if (!tK) return tUtf8;
+    if (!tUtf8) return tK;
+    return (countFFFD(tK) < countFFFD(tUtf8)) ? tK : tUtf8;
   }
 
   async function poll() {
@@ -590,110 +686,72 @@ window.addEventListener('scroll', hideTip, true);
         if (!latest || name > latest.name) latest = { name, handle };
       }
       if (!latest) return;
-
       if (currentFileName !== latest.name) {
         currentFileName = latest.name;
-        prevLen = 0; 
-        recentLines = [];
-        bagFullState = false;
+        prevLen = 0; recentLines = []; bagFullState = false;
         el('phCurrentFile').textContent = currentFileName;
       }
-
       const file = await latest.handle.getFile();
       const text = await readFileText(file);
-
       if (text.length < prevLen) prevLen = 0;
-
-      // 처음 연결 시 혹은 파일 변경 시 전체 텍스트에서 마지막 부분을 보여줌
       if (prevLen === 0) {
-        const allLines = text.split(/\r?\n/).filter(x => x.trim().length > 0);
-        recentLines = allLines.slice(-30);
+        const all = text.split(/\r?\n/).filter(x => x.trim().length > 0);
+        recentLines = all.slice(-20);
         prevLen = text.length;
-        // 초기 로드 시에도 가득 참 상태가 있는지 한 번 체크
-        recentLines.forEach(line => checkBagStatus(line));
       } else if (text.length > prevLen) {
         const newPart = text.slice(prevLen);
         prevLen = text.length;
         const newLines = newPart.split(/\r?\n/).filter(x => x.trim().length > 0);
-        
         for (const line of newLines) {
           recentLines.push(line);
           if (recentLines.length > 50) recentLines.shift();
           checkBagStatus(line);
         }
       }
-      
       el('phLogBox').textContent = recentLines.join("\n");
       el('phLogBox').scrollTop = el('phLogBox').scrollHeight;
-    } catch (e) { 
-      console.error("Poll Error:", e);
-      el('phLogBox').textContent = "로그 모니터링 중: " + e.message;
-    }
+    } catch (e) { console.error("Poll Error:", e); }
   }
 
   function checkBagStatus(line) {
-    // 가방 감지 정규식 (공백에 유연하게 대응)
-    const bagMatch = line.match(/가방\s*:\s*\[\s*(\d+)\s*\/\s*(\d+)\s*\]/);
-    if (bagMatch) {
-      const current = parseInt(bagMatch[1]);
-      // 남은 칸수가 0이면 알림 발생
-      if (current === 0) triggerBagAlarm();
-      else bagFullState = false;
-    }
-    
-    // 추가적인 감지 키워드
-    if (line.includes("[0]칸")) triggerBagAlarm();
-    else if (line.match(/\[[1-9]\d*\]칸/)) bagFullState = false;
-  }
-
-  function triggerBagAlarm() {
-    const now = Date.now();
-    // bagFullState가 false일 때만 알람 (한 번 감지 후 쿨타임 전까지 재알림 방지)
-    if (!bagFullState && (now - lastBagAlertAt > BAG_COOLDOWN_MS)) {
-      bagFullState = true; 
-      lastBagAlertAt = now;
-      notify("⚠️ 가방 가득 참", "페트 가방이 가득 찼습니다! 확인해 주세요.");
+    const isFull = line.includes("[0]칸") || line.match(/가방\s*:\s*\[\s*0\s*\/\s*\d+\s*\]/);
+    if (isFull) {
+      const now = Date.now();
+      if (!bagFullState && (now - lastBagAlertAt > BAG_COOLDOWN_MS)) {
+        bagFullState = true; 
+        lastBagAlertAt = now;
+        notify("⚠️ 가방 감지", "가방이 가득 찼거나 남은 칸이 없습니다!");
+      }
+    } else if (line.match(/\[[1-9]\d*\]칸/) || line.match(/가방\s*:\s*\[\s*[1-9]\d*\s*\/\s*\d+\s*\]/)) {
+      bagFullState = false;
     }
   }
 
   el('phPickDirBtn').onclick = async () => {
     try {
       dirHandle = await window.showDirectoryPicker();
-      el('phDirInfo').textContent = "연결됨"; 
-      el('phStatus').textContent = "감지 중"; 
+      el('phDirInfo').textContent = "연결됨"; el('phStatus').textContent = "감지 중"; 
       el('phStatus').classList.add('active');
       if (pollInterval) clearInterval(pollInterval);
-      
-      // 즉시 첫 실행
-      await poll();
       pollInterval = setInterval(poll, POLL_MS);
       showToast("로그 폴더 연결 완료");
-    } catch (e) { 
-      showToast("로그 폴더 선택 취소"); 
-    }
+    } catch (e) { showToast("폴더 선택 취소"); }
   };
-
   el('phNotifyBtn').onclick = async () => {
-    if (!("Notification" in window)) return showToast("브라우저 알림 미지원");
+    if (!("Notification" in window)) return showToast("알림 미지원");
     const p = await Notification.requestPermission();
-    if (p === "granted") showToast("알림 허용 완료");
+    if (p === "granted") showToast("알림 허용됨");
   };
-
   el('phStopBtn').onclick = () => {
     if (pollInterval) clearInterval(pollInterval);
-    dirHandle = null; 
-    el('phDirInfo').textContent = "폴더 미선택"; 
-    el('phStatus').textContent = "대기 중"; 
-    el('phStatus').classList.remove('active');
-    el('phLogBox').textContent = "중지됨. 로그 폴더를 다시 선택해주세요.";
+    dirHandle = null; el('phDirInfo').textContent = "폴더 미선택"; 
+    el('phStatus').textContent = "대기 중"; el('phStatus').classList.remove('active');
+    el('phLogBox').textContent = "중지됨.";
   };
-
-  el('phSoundVol').oninput = (e) => { 
-    el('phSoundVolVal').textContent = e.target.value + "%"; 
-  };
+  el('phSoundVol').oninput = (e) => { el('phSoundVolVal').textContent = e.target.value + "%"; };
 })();
 
-/* ========= UI 제어 (원본 스타일 보존) ========= */
+/* ========= 기존 UI 제어 & 분석 엔진 ========= */
 const chosungContainer = document.getElementById('chosung');
 const chosungTokens = document.getElementById('chosungTokens');
 const petListEl = document.getElementById('petList');
@@ -706,28 +764,19 @@ function renderChosungTokens(){
   chosungTokens.innerHTML = "";
   const label = document.createElement('div'); label.className = 'chip label'; label.textContent = "선택한 초성 :";
   chosungTokens.appendChild(label);
-  
   if(!currentChosung) return;
   for(const ch of currentChosung){
     const t = document.createElement('div'); t.className = 'chip active'; t.textContent = ch;
     chosungTokens.appendChild(t);
   }
   const clearBtn = document.createElement('div'); clearBtn.className = 'chip'; clearBtn.textContent = '↺';
-  clearBtn.onclick = () => { 
-    currentChosung = ""; 
-    renderPetList(); 
-    renderChosungTokens(); 
-    Array.from(chosungContainer.children).forEach(el=>el.classList.remove('active'));
-  };
+  clearBtn.onclick = () => { currentChosung = ""; renderPetList(); renderChosungTokens(); Array.from(chosungContainer.children).forEach(el=>el.classList.remove('active')); };
   chosungTokens.appendChild(clearBtn);
 }
-
 CHO_BUTTONS.forEach(c => {
   const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = c;
   chip.addEventListener('click', () => {
-    currentChosung += c; 
-    renderPetList(); 
-    renderChosungTokens();
+    currentChosung += c; renderPetList(); renderChosungTokens();
     Array.from(chosungContainer.children).forEach(el=>el.classList.remove('active')); 
     chip.classList.add('active');
   });
@@ -745,15 +794,12 @@ function renderFavChips(){
 
 function renderPetList() {
   const kw = searchInput.value.trim();
-  const list = ALL_NAMES.filter(n => {
-    return (kw ? n.includes(kw) : true) && (currentChosung ? getChosung(n).startsWith(currentChosung) : true);
-  });
+  const list = ALL_NAMES.filter(n => (kw ? n.includes(kw) : true) && (currentChosung ? getChosung(n).startsWith(currentChosung) : true));
   petListEl.innerHTML = "";
   list.forEach(n => {
     const item = document.createElement('div'); item.className = 'pet-item' + (selectedName === n ? ' selected' : '');
     const nameSpan = document.createElement('span'); nameSpan.className = 'pet-name'; nameSpan.textContent = n;
     const rightDiv = document.createElement('div'); rightDiv.className = 'pet-right';
-
     const r8 = R8MAP[n];
     if (r8 && (Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8.length : (r8.length||0))) {
       const badge = document.createElement('span'); badge.className = 'badge-r8 tip'; badge.textContent = '100%';
@@ -762,11 +808,9 @@ function renderPetList() {
       badge.setAttribute('data-tip', `8등급 보장 초기치\n${preview}${sets.length>15?' 외...':''}`);
       rightDiv.appendChild(badge);
     }
-    
     const star = document.createElement('span'); star.className = 'fav-icon' + (isFav(n)?' active':''); star.textContent = '★';
     star.onclick = (e) => { e.stopPropagation(); toggleFav(n); };
     rightDiv.appendChild(star);
-
     item.appendChild(nameSpan); item.appendChild(rightDiv);
     item.onclick = () => { selectPetName(n); closeSidebar(); };
     petListEl.appendChild(item);
@@ -774,7 +818,6 @@ function renderPetList() {
 }
 searchInput.oninput = renderPetList;
 
-/* ========= 분석 엔진 ========= */
 function solveUFromSG_JJYAL(SG, e){
   try{
     if(!SG) return null;
@@ -795,7 +838,6 @@ function solveUFromSG_JJYAL(SG, e){
     return { u:{hp:+A[0][3].minus(2.5).round(), atk:+A[1][3].minus(2.5).round(), def:+A[2][3].minus(2.5).round(), agi:+d}, e };
   }catch(e){ return null; }
 }
-
 function inferKU_JJYAL(S0, SG){
   const S0int = S0.map(Math.floor); let best=null;
   for(let e=435; e<=575; e+=5){
@@ -810,7 +852,6 @@ function inferKU_JJYAL(S0, SG){
   }
   return best;
 }
-
 function enumerate_jjyal(pku, obs){
   const k = new Decimal(pku.k), fac = k.div(100), u = pku.u;
   let matches = 0, r8 = 0, dist = {};
@@ -828,7 +869,6 @@ function enumerate_jjyal(pku, obs){
   return {matches, rank8:r8, dist};
 }
 
-/* ========= Interaction & Rendering ========= */
 function selectPetName(n){
   selectedName=n; renderPetList();
   const row=GLOBAL_TABLE[n]||null;
@@ -842,7 +882,6 @@ function selectPetName(n){
   }
   resetResult();
 }
-
 document.getElementById('btnCalc').onclick = () => {
   if(!selectedName) return showToast("페트를 먼저 선택하세요!");
   const obs = ['hp','atk','def','agi'].map(s => parseInt(document.getElementById('obs_'+s).value));
@@ -855,23 +894,27 @@ document.getElementById('btnCalc').onclick = () => {
   }
   renderResult(enumerate_jjyal({k,u}, obs));
 };
-
 function resetResult() {
     document.getElementById('kpiSuccess').textContent = "0%"; document.getElementById('kpiTries').textContent = "-";
-    document.getElementById('ringSuccess').style.strokeDasharray = "0, 100"; document.getElementById('ringTries').style.strokeDasharray = "0, 100";
+    HUD_RING.update(0);
+    const trFill = document.getElementById('trFill'); if(trFill) trFill.setAttribute('stroke-dasharray', `0 283`);
     document.getElementById('kpiAppear').textContent = "-"; document.getElementById('totMatches').textContent = "-"; document.getElementById('rank8Matches').textContent = "-";
     document.getElementById('dist').innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px;">분석 대기 중...</div>';
 }
-
 function renderResult(res) {
     const m = res.matches, r8 = res.rank8, sPct = m ? (r8/m*100) : 0, tries = sPct > 0 ? (100/sPct) : Infinity;
-    document.getElementById('ringSuccess').style.strokeDasharray = `${sPct.toFixed(1)}, 100`;
+    HUD_RING.update(sPct / 100);
+    const trFill = document.getElementById('trFill');
+    if(trFill) {
+      const f = Math.min(1, sPct > 0 ? (sPct / 100 * 5) : 0); // 시도 횟수는 상대적 표시
+      trFill.setAttribute('stroke-dasharray', `${f * 283} 283`);
+      trFill.setAttribute('stroke', sPct >= 20 ? 'var(--ok)' : (sPct >= 5 ? 'var(--warn)' : 'var(--bad)'));
+    }
     document.getElementById('kpiSuccess').textContent = sPct.toFixed(2) + "%";
     document.getElementById('kpiTries').textContent = isFinite(tries) ? Math.round(tries).toLocaleString() : "∞";
     document.getElementById('kpiAppear').textContent = (m/TOTAL*100).toFixed(4) + "%";
     document.getElementById('totMatches').textContent = m.toLocaleString();
     document.getElementById('rank8Matches').textContent = r8.toLocaleString();
-
     let html = `<div class="rank8-card"><div class="rank8-label">8등급</div><div class="rank8-value">${r8.toLocaleString()}개 (${sPct.toFixed(2)}%)</div></div>`;
     const entries = Object.entries(res.dist).map(([r,c])=>({r:parseInt(r),c})).sort((a,b)=>b.r-a.r).filter(e=>e.r!==8);
     if(entries.length>0){
@@ -885,16 +928,13 @@ function renderResult(res) {
     }
     document.getElementById('dist').innerHTML = html;
 }
-
 function toggleDetails(btn){
   const d = document.getElementById('hiddenDetails');
   if(d.classList.contains('open')){ d.classList.remove('open'); btn.textContent="▼ 나머지 등급 보기"; }
   else { d.classList.add('open'); btn.textContent="▲ 접기"; }
 }
-
 document.getElementById('btnReset').onclick = () => { selectPetName(""); resetResult(); };
 document.getElementById('btnAdmin').onclick = () => { location.href = "./admin.html"; };
-
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebarOverlay');
 function openSidebar() { sidebar.classList.add('active'); overlay.classList.add('active'); document.getElementById('closeSidebarBtn').style.display='block'; }
@@ -902,8 +942,6 @@ function closeSidebar() { sidebar.classList.remove('active'); overlay.classList.
 document.getElementById('openSidebarBtn').onclick = openSidebar;
 document.getElementById('closeSidebarBtn').onclick = closeSidebar;
 overlay.onclick = closeSidebar;
-
-// 휠 조절 기능
 function enableWheelStep(el){
   el.addEventListener('wheel',(e)=>{ if(document.activeElement!==el) return; e.preventDefault(); const delta = e.deltaY<0? 1 : -1; el.value = String(parseInt(el.value||"0",10) + delta); }, {passive:false});
 }
@@ -913,13 +951,7 @@ document.addEventListener('click', (e) => {
     const input = document.getElementById(btn.dataset.target);
     if(input) input.value = (parseInt(input.value||0) + parseInt(btn.dataset.delta));
 });
-
-(async function init(){
-    await loadGlobalTable();
-    await loadRank8Map();
-    renderChosungTokens();
-    renderPetList();
-})();
+(async function init(){ await loadGlobalTable(); await loadRank8Map(); renderChosungTokens(); renderPetList(); })();
 </script>
 </body>
 </html>
