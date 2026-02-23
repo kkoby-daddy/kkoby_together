@@ -244,6 +244,7 @@
     .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 90; display: none; }
     .sidebar-overlay.active { display: block; }
     .dashboard { grid-template-columns: 1fr; padding: 60px 15px 15px; }
+    .menu-toggle { display: block; }
   }
 
   #toastWrap { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; width: 90%; pointer-events: none; }
@@ -360,12 +361,12 @@
 
 <script>
 /* ========= 데이터 로딩 & 유틸 ========= */
-const LOCAL_PETS = "data/pets.json";
 const GH_OWNER  = "kkoby-daddy";
-const GH_REPO   = "kkoby-daddy.github.io/kkoby_together/";
+const GH_REPO   = "kkoby_together"; 
 const GH_BRANCH = "main";
 const PETS_PATH = "data/pets.json";
 const REMOTE_PETS = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${PETS_PATH}`;
+const LOCAL_PETS = "data/pets.json";
 const R8_JSON_CANDIDATES = [
   "data/guaranteed_rank8.full.json",
   "data/guaranteed_rank8.min.json",
@@ -374,7 +375,7 @@ const R8_JSON_CANDIDATES = [
 const LS_TABLE = "TogetherPetTable_cache";
 const TOTAL = 178750;
 const FAV_LS_KEY = "pet_favs_v1";
-const ALERT_SOUND_URL = 'https://raw.githubusercontent.com/kkoby-daddy/kkoby_together/main/sam_02.wav';
+const ALERT_SOUND_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/sam_02.wav`;
 const alertAudio = new Audio(ALERT_SOUND_URL);
 const decoder = new TextDecoder('euc-kr'); 
 const BAG_FULL_REGEX = /가방\s*:\s*\[\s*0\s*\/\s*5\s*\]/;
@@ -418,7 +419,7 @@ document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip')
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
 
-/* ========= 데이터 로딩 ========= */
+/* ========= 데이터 로딩 최적화 ========= */
 async function loadGlobalTable(){
   try{
     const obj = await fetchJSON(REMOTE_PETS);
@@ -443,6 +444,7 @@ async function loadRank8Map(){
       const m = await fetchJSON(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${path}`);
       if (typeof m==="object" && !Array.isArray(m)){ 
         R8MAP = m; 
+        renderPetList(); // 배지 표시를 위해 다시 렌더링
         return; 
       }
     }catch{}
@@ -573,7 +575,53 @@ function renderFavChips(){
   });
 }
 
-/* ========= 페트 계산기 기능 ========= */
+/* ========= 페트 리스트 렌더링 (배지 및 모바일 검색 최적화) ========= */
+function renderPetList(){
+  const kw = document.getElementById('petSearch').value.trim();
+  const listEl = document.getElementById('petList');
+  if(!listEl) return;
+  listEl.innerHTML = "";
+  
+  const filtered = ALL_NAMES.filter(n => {
+    const matchKw = kw ? n.includes(kw) : true;
+    const matchCho = currentChosung ? getChosung(n).startsWith(currentChosung) : true;
+    return matchKw && matchCho;
+  });
+
+  filtered.forEach(n => {
+    const item = document.createElement('div'); item.className = 'pet-item';
+    if(selectedName === n) item.classList.add('selected');
+    const nameSpan = document.createElement('span'); nameSpan.className = 'pet-name'; nameSpan.textContent = n;
+    item.appendChild(nameSpan);
+    
+    const rightDiv = document.createElement('div'); rightDiv.className = 'pet-right';
+    const r8 = R8MAP[n];
+    
+    if (r8) {
+        const sets = Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8 : (Array.isArray(r8) ? r8 : null);
+        if (sets && sets.length > 0) {
+            const badge = document.createElement('span'); badge.className = 'badge-r8 tip'; badge.textContent = '100%';
+            badge.setAttribute('data-tip', `8등급 보장 초기치\n${sets.slice(0,10).map(a=>`(${a[0]},${a[1]},${a[2]},${a[3]})`).join(' · ')}`);
+            badge.addEventListener('click', (e) => { e.stopPropagation(); });
+            rightDiv.appendChild(badge);
+        }
+    }
+    
+    const star = document.createElement('span'); star.className = 'fav-icon ' + (isFav(n)?'active':''); star.textContent = '★';
+    star.onclick = (e) => { e.stopPropagation(); toggleFav(n); };
+    rightDiv.appendChild(star);
+    item.appendChild(rightDiv);
+    
+    item.onclick = () => { selectPetName(n); closeSidebar(); };
+    listEl.appendChild(item);
+  });
+}
+
+/* 모바일 검색 입력을 위한 리스너 개선 */
+document.getElementById('petSearch').addEventListener('input', renderPetList);
+document.getElementById('petSearch').addEventListener('keyup', (e) => { if(e.key === "Enter") renderPetList(); });
+
+/* ========= 계산 및 결과 출력 (원본 HUD 로직 유지) ========= */
 function selectPetName(n){
   selectedName=n; renderPetList();
   const row=GLOBAL_TABLE[n]||null;
@@ -597,47 +645,9 @@ function selectPetName(n){
   resetResult();
 }
 
-function renderPetList(){
-  const kw = document.getElementById('petSearch').value.trim();
-  const listEl = document.getElementById('petList'); listEl.innerHTML = "";
-  const filtered = ALL_NAMES.filter(n => {
-    const matchKw = kw ? n.includes(kw) : true;
-    const matchCho = currentChosung ? getChosung(n).startsWith(currentChosung) : true;
-    return matchKw && matchCho;
-  });
-  filtered.forEach(n => {
-    const item = document.createElement('div'); item.className = 'pet-item';
-    if(selectedName === n) item.classList.add('selected');
-    const nameSpan = document.createElement('span'); nameSpan.className = 'pet-name'; nameSpan.textContent = n;
-    item.appendChild(nameSpan);
-    
-    const rightDiv = document.createElement('div'); rightDiv.className = 'pet-right';
-    const r8 = R8MAP[n];
-    
-    // 100% 보장 배지 렌더링 복구
-    if (r8 && (Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8.length : (r8.length||0))) {
-        const badge = document.createElement('span'); badge.className = 'badge-r8 tip'; badge.textContent = '100%';
-        const sets = Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8 : r8;
-        badge.setAttribute('data-tip', `8등급 보장 초기치\n${sets.slice(0,10).map(a=>`(${a[0]},${a[1]},${a[2]},${a[3]})`).join(' · ')}`);
-        badge.addEventListener('click', (e) => { e.stopPropagation(); });
-        rightDiv.appendChild(badge);
-    }
-    
-    const star = document.createElement('span'); star.className = 'fav-icon ' + (isFav(n)?'active':''); star.textContent = '★';
-    star.onclick = (e) => { e.stopPropagation(); toggleFav(n); };
-    rightDiv.appendChild(star);
-    item.appendChild(rightDiv);
-    
-    item.onclick = () => { selectPetName(n); closeSidebar(); };
-    listEl.appendChild(item);
-  });
-}
-
-document.getElementById('petSearch').addEventListener('input', renderPetList);
-
 document.getElementById('btnCalc').onclick = () => {
   if(!selectedName) return showToast("페트를 선택하세요");
-  const obs = ['hp','atk','def','agi'].map(k => parseInt(document.getElementById('obs_'+k).value));
+  const obs = ['hp','atk','def','agi'].map(k => parseInt(document.getElementById('obs_'+k).value || 0));
   const row = GLOBAL_TABLE[selectedName];
   const res = calculate_logic({k:row.k, u:row.u}, obs);
   renderResult(res);
@@ -730,11 +740,13 @@ function resetResult() {
 }
 
 /* ========= UI 제어 (사이드바 등) ========= */
-function openSidebar() { document.getElementById('sidebar').classList.add('active'); document.getElementById('sidebarOverlay').classList.add('active'); }
-function closeSidebar() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebarOverlay').classList.remove('active'); }
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+function openSidebar() { sidebar.classList.add('active'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+function closeSidebar() { sidebar.classList.remove('active'); overlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
 document.getElementById('openSidebarBtn').onclick = openSidebar;
 document.getElementById('closeSidebarBtn').onclick = closeSidebar;
-document.getElementById('sidebarOverlay').onclick = closeSidebar;
+overlay.onclick = closeSidebar;
 document.getElementById('btnReset').onclick = () => location.reload();
 
 document.addEventListener('click', (e) => {
@@ -747,13 +759,19 @@ function enableWheelStep(el){
   el.addEventListener('wheel',(e)=>{ if(document.activeElement!==el) return; e.preventDefault(); const delta = e.deltaY<0? 1 : -1; el.value = String(parseInt(el.value||"0",10) + delta); }, {passive:false});
 }
 
+/* 초기화 실행 순서 개선 */
 (async function init(){
-    await loadGlobalTable();
-    await loadRank8Map(); // 보장 맵 데이터 먼저 로드
-    renderPetList();      // 맵 데이터 로드 후 배지 표시를 위해 다시 그림
+    // 1. UI 뼈대 즉시 노출
     renderChosungTokens();
+    renderPetList();
+    
+    // 2. 입력창 휠 기능 연결
     ['obs_hp','obs_atk','obs_def','obs_agi'].forEach(id => { const el = document.getElementById(id); if(el) enableWheelStep(el); });
     document.getElementById('btnAdmin').onclick = ()=>location.href="./admin.html";
+
+    // 3. 데이터 로드 (백그라운드)
+    loadGlobalTable(); 
+    loadRank8Map(); 
 })();
 </script>
 </body>
