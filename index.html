@@ -143,7 +143,7 @@
   .notice-content { padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 16px; line-height: 1.8; color: var(--text-sub); }
 
   /* 로그 알리미 패널 (하단 전체) */
-  .log-panel { grid-column: 1 / -1; min-height: auto; }
+  .log-panel { grid-column: 1 / -1; min-height: auto; margin-top: 10px; }
   .log-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
   
   .log-container {
@@ -170,40 +170,32 @@
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; }
   .dot.active { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 
-  /* 기존 계산기 스타일 */
+  /* 입력 패널 스타일 */
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
   .stat-col label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; text-align: center; }
   .stat-box { background: rgba(0,0,0,0.2); border: var(--border); border-radius: 8px; padding: 8px; text-align: center; display: flex; align-items: center; justify-content: center; }
-  
-  /* 입력창 스타일 수정: 화살표 제거 및 가운데 정렬 */
   .stat-box input { 
     width: 100%; background: transparent; border: none; 
     color: var(--text-main); font-size: 16px; font-weight: 700; 
     text-align: center; outline: none; font-family: var(--font-tech); padding: 0; 
     display: block; margin: 0 auto;
   }
-  
-  /* 숫자 입력창 화살표(스피너) 제거 - Chrome, Safari, Edge, Opera */
-  .stat-box input::-webkit-outer-spin-button,
-  .stat-box input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  /* 숫자 입력창 화살표 제거 - Firefox */
-  .stat-box input[type=number] {
-    -moz-appearance: textfield;
-  }
-
+  .stat-box input::-webkit-outer-spin-button, .stat-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .stat-box input[type=number] { -moz-appearance: textfield; }
   .stat-box.readonly { opacity: 0.6; background: rgba(0,0,0,0.4); }
+  
   .input-group-title { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .input-group-title::after { content:''; height:1px; flex:1; background: rgba(255,255,255,0.1); }
   .stepper-btn { width: 100%; display: flex; gap: 4px; margin-top: 6px; }
   .s-btn { flex: 1; background: rgba(255,255,255,0.08); border: none; color: var(--text-sub); font-size: 14px; cursor: pointer; border-radius: 6px; padding: 12px 0; touch-action: manipulation; }
+  .s-btn:active { background: rgba(255,255,255,0.2); color: var(--text-main); }
+
   .action-btns { display: flex; gap: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
   .btn-main { flex: 1; padding: 16px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 16px; transition: 0.2s; }
   .btn-calc { background: var(--accent); color: #000; }
   .btn-reset { background: rgba(255,255,255,0.1); color: var(--text-main); }
 
+  /* 결과 패널 HUD */
   .hud-rings { display: flex; justify-content: space-around; align-items: flex-end; padding: 10px 0 20px; }
   .ring-container { position: relative; width: 90px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .ring-svg { width: 70px; height: 70px; transform: rotate(-90deg); }
@@ -217,13 +209,41 @@
   .sum-label { font-size: 11px; color: var(--text-sub); display: block; margin-bottom: 4px;}
   .sum-val { font-size: 16px; font-weight: 700; color: var(--accent); font-family: var(--font-tech); }
 
+  .rank8-card {
+    background: rgba(53, 199, 89, 0.1); border: 1px solid var(--ok);
+    border-radius: 12px; padding: 16px; display: flex;
+    justify-content: space-between; align-items: center; margin-bottom: 10px;
+  }
+  .rank8-label { color: var(--ok); font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+  .rank8-label::before { content:'★'; }
+  .rank8-value { font-family: var(--font-tech); color: #fff; font-size: 18px; font-weight: 700; }
+  .rank8-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-left: 8px; }
+
+  .toggle-details-btn {
+    width: 100%; background: rgba(255,255,255,0.05); border: none;
+    color: var(--text-sub); padding: 12px; border-radius: 8px;
+    font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
+  }
+  
+  .hidden-details { display: none; margin-top: 10px; animation: slideDown 0.3s ease; }
+  .hidden-details.open { display: block; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .detail-table th { text-align: left; color: var(--text-sub); padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .detail-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .rank-badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.1); }
+  .rank-badge.s { color: var(--ok); background: rgba(53, 199, 89, 0.15); border: 1px solid var(--ok); }
+  .rank-badge.a { color: var(--warn); background: rgba(255, 179, 0, 0.15); border: 1px solid var(--warn); }
+
   @media (max-width: 900px) {
     body { height: auto; overflow: auto; background: #1a1d26; }
     .app-container { flex-direction: column; height: auto; min-height: 100vh; }
-    .sidebar { position: fixed; transform: translateX(-100%); width: 85%; max-width: 320px; height: 100vh; }
+    .sidebar { position: fixed; top: 0; left: 0; width: 85%; max-width: 320px; height: 100vh; transform: translateX(-100%); }
     .sidebar.active { transform: translateX(0); }
+    .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 90; display: none; }
+    .sidebar-overlay.active { display: block; }
     .dashboard { grid-template-columns: 1fr; padding: 60px 15px 15px; }
-    .panel { min-height: auto; }
   }
 
   #toastWrap { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; width: 90%; pointer-events: none; }
@@ -246,10 +266,8 @@
       <div class="ver"><span>Date : 2026.02.20</span><span>Data by. 꼬비아빠</span></div>
     </div>
     <div class="search-area"><div class="search-box"><input type="text" id="petSearch" placeholder="페트 이름 검색..." autocomplete="off" /></div></div>
-    
     <div class="filter-chips" id="chosungTokens" style="padding-bottom:5px; min-height:30px;"></div>
     <div class="filter-chips" id="chosung"></div>
-
     <div style="padding: 0 20px 10px; display:flex; gap:10px; align-items:center;">
        <span style="font-size:11px; color:var(--text-sub);">즐겨찾기:</span>
        <div id="favChips" style="display:flex; gap:5px; flex-wrap:wrap;"></div>
@@ -267,7 +285,6 @@
     </nav>
 
     <div class="dashboard">
-      <!-- 공지사항 -->
       <section class="panel notice-panel">
         <div class="notice-header"><div class="notice-title">SYSTEM NOTICE (StoneAge Together)</div></div>
         <div class="notice-content">
@@ -335,7 +352,6 @@
             <div style="color:var(--text-sub); text-align:center; padding-top:60px;">로그 감시를 시작하려면 게임 폴더 내 'Chat' 폴더를 선택하세요.</div>
         </div>
       </section>
-
     </div>
   </main>
 </div>
@@ -343,25 +359,34 @@
 <div id="toastWrap"></div>
 
 <script>
-/* ========= 전역 데이터 & 설정 ========= */
-const REMOTE_PETS = `https://raw.githubusercontent.com/kkoby-daddy/kkoby_together/main/data/pets.json`;
+/* ========= 데이터 로딩 & 유틸 ========= */
+const LOCAL_PETS = "data/pets.json";
+const GH_OWNER  = "kkoby-daddy";
+const GH_REPO   = "kkoby-daddy.github.io/kkoby_together/";
+const GH_BRANCH = "main";
+const PETS_PATH = "data/pets.json";
+const REMOTE_PETS = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${PETS_PATH}`;
 const R8_JSON_CANDIDATES = [
   "data/guaranteed_rank8.full.json",
   "data/guaranteed_rank8.min.json",
   "guaranteed_rank8.sample8.json"
 ];
+const LS_TABLE = "TogetherPetTable_cache";
+const TOTAL = 178750;
+const FAV_LS_KEY = "pet_favs_v1";
 const ALERT_SOUND_URL = 'https://raw.githubusercontent.com/kkoby-daddy/kkoby_together/main/sam_02.wav';
 const alertAudio = new Audio(ALERT_SOUND_URL);
 const decoder = new TextDecoder('euc-kr'); 
 const BAG_FULL_REGEX = /가방\s*:\s*\[\s*0\s*\/\s*5\s*\]/;
 const CAPTURE_REGEX = /포획하였습니다|획득하였습니다|나타났다|주웠습니다/;
-const FAV_LS_KEY = "pet_favs_v1";
 
 let GLOBAL_TABLE = {}, ALL_NAMES = [], R8MAP = {}, FAVS = [];
 let dirHandle = null, lastLogText = "", lastChatFile = "";
 let selectedName = null, currentChosung = "";
 
-/* ========= 유틸리티 ========= */
+function getJSONLS(key, fallback={}){ try{ return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback)); }catch{ return fallback; } }
+function setJSONLS(key, obj){ localStorage.setItem(key, JSON.stringify(obj)); }
+function fetchJSON(url){ return fetch(url+`?v=${Date.now()}`,{cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.json();}); }
 function showToast(msg){
   const wrap = document.getElementById("toastWrap");
   const t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
@@ -369,9 +394,8 @@ function showToast(msg){
   setTimeout(()=>{ t.style.opacity = '0'; setTimeout(()=>t.remove(), 300); }, 2000);
 }
 
-/* 툴팁 로직 */
+/* 툴팁 로직 복구 */
 const tipEl = document.getElementById('floatingTip');
-let tipTimer = null;
 function hideTip(){ tipEl.classList.remove('show'); }
 function showTip(target){
   const text = target.getAttribute('data-tip');
@@ -388,12 +412,39 @@ function showTip(target){
   left = Math.max(10, Math.min(left, window.innerWidth - tipEl.offsetWidth - 10));
   let top = rect.top - tipEl.offsetHeight - 10;
   if(top < 10) top = rect.bottom + 10;
-  tipEl.style.left = `${left}px`;
-  tipEl.style.top  = `${top}px`;
+  tipEl.style.left = `${left}px`; tipEl.style.top  = `${top}px`;
 }
 document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip'); if(t) showTip(t); }, true);
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
+
+/* ========= 데이터 로딩 복구 ========= */
+async function loadGlobalTable(){
+  try{
+    const obj = await fetchJSON(REMOTE_PETS);
+    if(typeof obj!=="object" || Array.isArray(obj)) throw 0;
+    GLOBAL_TABLE = obj; setJSONLS(LS_TABLE, obj);
+  }catch{
+    try{
+      const obj = await fetchJSON(LOCAL_PETS);
+      GLOBAL_TABLE = obj; setJSONLS(LS_TABLE, obj);
+    }catch{
+      GLOBAL_TABLE = getJSONLS(LS_TABLE, {});
+    }
+  }
+  ALL_NAMES = Object.keys(GLOBAL_TABLE).sort((a,b)=>a.localeCompare(b,'ko'));
+  FAVS = loadFavs().filter(n => GLOBAL_TABLE[n]);
+  saveFavs(); renderFavChips(); renderPetList();
+}
+
+async function loadRank8Map(){
+  for(const path of R8_JSON_CANDIDATES){
+    try{
+      const m = await fetchJSON(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${path}`);
+      if (typeof m==="object" && !Array.isArray(m)){ R8MAP = m; return; }
+    }catch{}
+  }
+}
 
 /* ========= 로그 알리미 기능 ========= */
 document.getElementById('btnSoundTest').onclick = () => {
@@ -407,9 +458,7 @@ document.getElementById('btnPicker').onclick = async () => {
     document.getElementById('dirStatus').textContent = `감시 중: ${dirHandle.name}`;
     document.getElementById('statusDot').classList.add('active');
     document.getElementById('logDisplay').innerHTML = `<div style="color:var(--ok); text-align:center; padding-top:60px;">연결됨. 게임 로그 대기 중...</div>`;
-    alertAudio.load();
-    startMonitoring();
-    showToast("로그 감시를 시작합니다.");
+    alertAudio.load(); startMonitoring(); showToast("로그 감시를 시작합니다.");
   } catch (e) { showToast("폴더 선택이 취소되었습니다."); }
 };
 
@@ -513,39 +562,15 @@ function loadFavs(){ try{ const arr = JSON.parse(localStorage.getItem(FAV_LS_KEY
 function saveFavs(){ localStorage.setItem(FAV_LS_KEY, JSON.stringify(FAVS)); }
 function isFav(name){ return FAVS.includes(name); }
 function toggleFav(n){ if(isFav(n)) FAVS = FAVS.filter(x=>x!==n); else { if(FAVS.length>=5){ showToast("최대 5개까지 가능"); return; } FAVS.push(n); } saveFavs(); renderFavChips(); renderPetList(); }
-
 function renderFavChips(){
   const box = document.getElementById('favChips'); box.innerHTML = "";
   FAVS.forEach(n => {
     const c = document.createElement('div'); c.className = 'chip active'; c.textContent = n;
-    c.addEventListener('click', () => { selectPetName(n); closeSidebar(); });
-    box.appendChild(c);
+    c.addEventListener('click', () => { selectPetName(n); closeSidebar(); }); box.appendChild(c);
   });
 }
 
-/* ========= 페트 계산기 기능 ========= */
-async function loadData(){
-  try {
-    const res = await fetch(REMOTE_PETS+`?v=${Date.now()}`);
-    GLOBAL_TABLE = await res.json();
-    ALL_NAMES = Object.keys(GLOBAL_TABLE).sort((a,b)=>a.localeCompare(b,'ko'));
-    FAVS = loadFavs().filter(n => GLOBAL_TABLE[n]);
-    saveFavs();
-    renderFavChips();
-    renderPetList();
-  } catch(e) { showToast("데이터 로딩 실패"); }
-}
-
-async function loadRank8Map(){
-  for(const path of R8_JSON_CANDIDATES){
-    try{
-      const res = await fetch(`https://raw.githubusercontent.com/kkoby-daddy/kkoby_together/main/${path}`);
-      const m = await res.json();
-      if (typeof m==="object" && !Array.isArray(m)){ R8MAP = m; return; }
-    }catch{}
-  }
-}
-
+/* ========= 페트 계산기 기능 복구 ========= */
 function selectPetName(n){
   selectedName=n; renderPetList();
   const row=GLOBAL_TABLE[n]||null;
@@ -600,8 +625,6 @@ function renderPetList(){
   });
 }
 
-document.getElementById('petSearch').addEventListener('input', renderPetList);
-
 document.getElementById('btnCalc').onclick = () => {
   if(!selectedName) return showToast("페트를 선택하세요");
   const obs = ['hp','atk','def','agi'].map(k => parseInt(document.getElementById('obs_'+k).value));
@@ -629,23 +652,71 @@ function calculate_logic(pku, obs){
   return {matches, rank8, dist};
 }
 
+/* ========= 분석 결과 출력 복구 (원본.html 스타일) ========= */
 function renderResult(res) {
-  const m = res.matches, r8 = res.rank8;
-  const pct = m ? (r8/m*100) : 0;
-  const tries = pct > 0 ? (100/pct) : Infinity;
-  document.getElementById('ringSuccess').style.strokeDasharray = `${pct.toFixed(1)}, 100`;
-  document.getElementById('kpiSuccess').textContent = pct.toFixed(2) + "%";
+  const matches = res.matches|0;
+  const rank8 = res.rank8|0;
+  const successPct = matches ? (rank8/matches*100) : 0;
+  const appear = matches/TOTAL*100;
+  const tries = successPct > 0 ? (100/successPct) : Infinity;
+
+  document.getElementById('ringSuccess').style.strokeDasharray = `${Math.min(successPct, 100).toFixed(1)}, 100`;
+  const tryGauge = Math.min((tries / 200) * 100, 100);
+  document.getElementById('ringTries').style.strokeDasharray = `${tryGauge.toFixed(1)}, 100`;
+  const tryColor = tries <= 5 ? 'var(--ok)' : (tries <= 20 ? 'var(--warn)' : 'var(--bad)');
+  document.getElementById('ringTries').style.stroke = tryColor;
+
+  document.getElementById('kpiSuccess').textContent = successPct.toFixed(2) + "%";
   document.getElementById('kpiTries').textContent = Number.isFinite(tries) ? Math.round(tries).toLocaleString() : "-";
-  document.getElementById('totMatches').textContent = m.toLocaleString();
-  document.getElementById('rank8Matches').textContent = r8.toLocaleString();
-  let html = `<div class="rank8-card"><div class="rank8-label">8등급</div><div class="rank8-value">${r8.toLocaleString()}개</div></div>`;
+  document.getElementById('kpiAppear').textContent = appear.toFixed(4) + "%";
+  document.getElementById('totMatches').textContent = matches.toLocaleString();
+  document.getElementById('rank8Matches').textContent = rank8.toLocaleString();
+
+  const entries = Object.entries(res.dist).map(([r,c]) => ({r:parseInt(r), c})).sort((a,b) => b.r - a.r);
+  if(entries.length === 0) {
+    document.getElementById('dist').innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sub);">일치하는 결과가 없습니다.</div>`;
+    return;
+  }
+
+  let html = "";
+  const grade8 = entries.find(e => e.r === 8);
+  const count8 = grade8 ? grade8.c : 0;
+  const pct8 = matches ? (count8/matches*100).toFixed(2) : "0.00";
+  
+  html += `
+  <div class="rank8-card">
+    <div class="rank8-label">8등급 <span class="rank8-sub">(MAX)</span></div>
+    <div class="rank8-value">${count8.toLocaleString()}개 <span style="font-size:14px; opacity:0.7">(${pct8}%)</span></div>
+  </div>`;
+
+  const otherGrades = entries.filter(e => e.r !== 8);
+  if(otherGrades.length > 0) {
+    html += `<button class="toggle-details-btn" onclick="toggleDetails(this)">▼ 나머지 등급 보기 (${otherGrades.length}종)</button>`;
+    html += `<div class="hidden-details" id="hiddenDetails">
+      <table class="detail-table" style="margin-top:10px;">
+      <thead><tr><th>등급</th><th>개수</th><th>확률</th></tr></thead>
+      <tbody>`;
+    otherGrades.forEach(e => {
+      const pct = (e.c/matches*100).toFixed(2);
+      let badgeClass = "rank-badge"; if(e.r >= 5) badgeClass += " a"; else badgeClass += " s"; 
+      html += `<tr><td><span class="${badgeClass}">${e.r}등급</span></td><td>${e.c.toLocaleString()}</td><td>${pct}%</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
   document.getElementById('dist').innerHTML = html;
+}
+
+function toggleDetails(btn) {
+  const details = document.getElementById('hiddenDetails');
+  const isOpen = details.classList.contains('open');
+  if(isOpen) { details.classList.remove('open'); btn.innerHTML = `▼ 나머지 등급 보기`; btn.style.background = "rgba(255,255,255,0.05)"; } 
+  else { details.classList.add('open'); btn.innerHTML = `▲ 접기`; btn.style.background = "rgba(255,255,255,0.15)"; }
 }
 
 function resetResult() {
     document.getElementById('kpiSuccess').textContent = "0%"; document.getElementById('kpiTries').textContent = "-";
     document.getElementById('ringSuccess').style.strokeDasharray = "0, 100"; document.getElementById('ringTries').style.strokeDasharray = "0, 100";
-    document.getElementById('totMatches').textContent = "-"; document.getElementById('rank8Matches').textContent = "-";
+    document.getElementById('kpiAppear').textContent = "-"; document.getElementById('totMatches').textContent = "-"; document.getElementById('rank8Matches').textContent = "-";
     document.getElementById('dist').innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px;">결과가 여기에 표시됩니다.</div>';
 }
 
@@ -663,16 +734,16 @@ document.addEventListener('click', (e) => {
     input.value = parseInt(input.value||0) + parseInt(btn.dataset.delta);
 });
 
-/* 마우스 휠 조절 로직 */
 function enableWheelStep(el){
   el.addEventListener('wheel',(e)=>{ if(document.activeElement!==el) return; e.preventDefault(); const delta = e.deltaY<0? 1 : -1; el.value = String(parseInt(el.value||"0",10) + delta); }, {passive:false});
 }
 
 (async function init(){
-    await loadData();
+    await loadGlobalTable();
     await loadRank8Map();
     renderChosungTokens();
     ['obs_hp','obs_atk','obs_def','obs_agi'].forEach(id => { const el = document.getElementById(id); if(el) enableWheelStep(el); });
+    document.getElementById('btnAdmin').onclick = ()=>location.href="./admin.html";
 })();
 </script>
 </body>
