@@ -61,19 +61,9 @@
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .sidebar-header { padding: 20px; border-bottom: var(--border); flex-shrink: 0; }
-  
   .brand-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .brand {
-    font-family: var(--font-tech); font-size: 18px; font-weight: 700;
-    color: var(--accent); letter-spacing: 1px;
-  }
-  
-  /* 사이드바 하단 정보 */
-  .ver { 
-    font-size: 11px; color: var(--text-sub); 
-    display: flex; justify-content: space-between; 
-    margin-top: 4px;
-  }
+  .brand { font-family: var(--font-tech); font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+  .ver { font-size: 11px; color: var(--text-sub); display: flex; justify-content: space-between; margin-top: 4px; }
   
   .search-area { padding: 15px 20px 5px; flex-shrink: 0; }
   .search-box { position: relative; margin-bottom: 10px; }
@@ -108,17 +98,9 @@
   }
   .pet-item:active { background: rgba(255,255,255,0.07); transform: scale(0.98); }
   .pet-item.selected { background: var(--accent-glow); border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-  
   .pet-name { font-weight: 500; font-size: 15px; }
-  
   .pet-right { display: flex; align-items: center; gap: 8px; }
-  
-  .badge-r8 {
-    font-size: 10px; padding: 3px 6px; 
-    background: rgba(192, 132, 252, 0.15); color: #e879f9; border: 1px solid #c084fc;
-    border-radius: 4px; font-weight: 700; cursor: help;
-  }
-  
+  .badge-r8 { font-size: 10px; padding: 3px 6px; background: rgba(192, 132, 252, 0.15); color: #e879f9; border: 1px solid #c084fc; border-radius: 4px; font-weight: 700; cursor: help; }
   .fav-icon { color: var(--text-sub); font-size: 18px; padding: 4px; }
   .fav-icon.active { color: #ffd700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
 
@@ -129,35 +111,10 @@
     -webkit-overflow-scrolling: touch;
   }
   
-  /* 우측 상단 네비게이션 (Admin 포함) */
-  .top-nav {
-    display: flex; justify-content: flex-end; align-items: center;
-    padding: 15px 20px; z-index: 20; min-height: 60px;
-    position: absolute; top: 0; right: 0; left: 0;
-    pointer-events: none; /* 배경 클릭 가능하게 */
-  }
-  
-  /* 실제 버튼들은 클릭 가능하게 */
-  .nav-controls {
-    pointer-events: auto;
-    display: flex; align-items: center; gap: 12px;
-    background: rgba(15, 17, 21, 0.8);
-    backdrop-filter: blur(5px);
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .menu-toggle { 
-    display: none; /* PC에선 숨김 */
-    font-size: 24px; color: var(--text-main); cursor: pointer; 
-  }
-  
-  .admin-btn {
-    font-size: 18px; color: var(--text-sub); cursor: pointer;
-    background: transparent; border: none; padding: 4px;
-    transition: 0.2s;
-  }
+  .top-nav { display: flex; justify-content: flex-end; align-items: center; padding: 15px 20px; z-index: 20; min-height: 60px; position: absolute; top: 0; right: 0; left: 0; pointer-events: none; }
+  .nav-controls { pointer-events: auto; display: flex; align-items: center; gap: 12px; background: rgba(15, 17, 21, 0.8); backdrop-filter: blur(5px); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+  .menu-toggle { display: none; font-size: 24px; color: var(--text-main); cursor: pointer; }
+  .admin-btn { font-size: 18px; color: var(--text-sub); cursor: pointer; background: transparent; border: none; padding: 4px; transition: 0.2s; }
   .admin-btn:hover { color: var(--accent); transform: scale(1.1); text-shadow: 0 0 8px var(--accent); }
 
   .dashboard {
@@ -171,7 +128,7 @@
     background: var(--card-bg); border-radius: var(--radius);
     border: var(--border); padding: 24px; backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: flex; flex-direction: column; height: auto;
-    min-height: 580px;
+    min-height: 520px;
   }
   .panel h2 {
     margin: 0 0 20px; font-size: 18px; font-family: var(--font-tech);
@@ -179,145 +136,98 @@
   }
   .panel h2::before { content:''; display:block; width: 4px; height: 18px; background: var(--accent); border-radius: 2px; }
 
-  .notice-panel { 
-    grid-column: 1 / -1; padding: 20px 24px; 
-    min-height: auto;
-  }
+  .notice-panel { grid-column: 1 / -1; padding: 20px 24px; min-height: auto; }
   .notice-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .notice-title { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
   .notice-title::before { content: 'ⓘ'; color: var(--accent); font-size: 20px; }
-  
-  .notice-content { 
-    padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); 
-    font-size: 16px; line-height: 1.8; color: var(--text-sub); 
-  }
+  .notice-content { padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 16px; line-height: 1.8; color: var(--text-sub); }
 
+  /* 로그 알리미 패널 (하단 전체) */
+  .log-panel { grid-column: 1 / -1; min-height: auto; }
+  .log-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+  
+  .log-container {
+    background: rgba(0,0,0,0.4); border-radius: 12px; padding: 15px;
+    height: 180px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05);
+    font-family: 'Courier New', Courier, monospace; font-size: 14px;
+  }
+  .log-entry { display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); animation: fadeIn 0.3s ease; }
+  .log-time { color: var(--text-sub); flex-shrink: 0; }
+  .log-msg { word-break: break-all; color: var(--text-main); }
+  .log-msg.highlight { color: var(--bad); font-weight: 700; text-shadow: 0 0 8px rgba(255,81,113,0.3); }
+  .log-msg.capture { color: var(--warn); font-weight: 700; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  .btn-dir-picker {
+    padding: 10px 18px; background: rgba(106, 160, 255, 0.1);
+    border: 1px dashed var(--accent); color: var(--accent); border-radius: 8px;
+    cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+  }
+  .btn-dir-picker:hover { background: rgba(106, 160, 255, 0.2); }
+  
+  .log-controls { display: flex; align-items: center; gap: 15px; }
+  .status-indicator { font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; }
+  .dot.active { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+
+  /* 기존 계산기 스타일 */
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
   .stat-col label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; text-align: center; }
-  .stat-box { background: rgba(0,0,0,0.2); border: var(--border); border-radius: 8px; padding: 8px; text-align: center; }
-  .stat-box input {
-    width: 100%; background: transparent; border: none;
-    color: var(--text-main); font-size: 16px; font-weight: 700;
-    text-align: center; outline: none; font-family: var(--font-tech); padding: 0;
-  }
-  .stat-box input::-webkit-outer-spin-button, .stat-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .stat-box.readonly { opacity: 0.6; background: rgba(0,0,0,0.4); }
+  .stat-box { background: rgba(0,0,0,0.2); border: var(--border); border-radius: 8px; padding: 8px; text-align: center; display: flex; align-items: center; justify-content: center; }
   
-  .input-group-title {
-    font-size: 13px; color: var(--text-sub); margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
+  /* 입력창 스타일 수정: 화살표 제거 및 가운데 정렬 */
+  .stat-box input { 
+    width: 100%; background: transparent; border: none; 
+    color: var(--text-main); font-size: 16px; font-weight: 700; 
+    text-align: center; outline: none; font-family: var(--font-tech); padding: 0; 
+    display: block; margin: 0 auto;
   }
+  
+  /* 숫자 입력창 화살표(스피너) 제거 - Chrome, Safari, Edge, Opera */
+  .stat-box input::-webkit-outer-spin-button,
+  .stat-box input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* 숫자 입력창 화살표 제거 - Firefox */
+  .stat-box input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  .stat-box.readonly { opacity: 0.6; background: rgba(0,0,0,0.4); }
+  .input-group-title { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .input-group-title::after { content:''; height:1px; flex:1; background: rgba(255,255,255,0.1); }
-
   .stepper-btn { width: 100%; display: flex; gap: 4px; margin-top: 6px; }
-  .s-btn {
-    flex: 1; background: rgba(255,255,255,0.08); border: none; color: var(--text-sub);
-    font-size: 14px; cursor: pointer; border-radius: 6px; padding: 12px 0; touch-action: manipulation;
-  }
-  .s-btn:active { background: rgba(255,255,255,0.2); color: var(--text-main); }
-
+  .s-btn { flex: 1; background: rgba(255,255,255,0.08); border: none; color: var(--text-sub); font-size: 14px; cursor: pointer; border-radius: 6px; padding: 12px 0; touch-action: manipulation; }
   .action-btns { display: flex; gap: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
-  .btn-main {
-    flex: 1; padding: 16px; border-radius: 12px; border: none;
-    font-weight: 700; cursor: pointer; font-size: 16px; transition: 0.2s;
-  }
+  .btn-main { flex: 1; padding: 16px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 16px; transition: 0.2s; }
   .btn-calc { background: var(--accent); color: #000; }
-  .btn-calc:active { transform: scale(0.98); filter: brightness(0.9); }
   .btn-reset { background: rgba(255,255,255,0.1); color: var(--text-main); }
-  .btn-reset:active { background: rgba(255,255,255,0.2); transform: scale(0.98); }
 
-  /* 결과 패널 HUD */
   .hud-rings { display: flex; justify-content: space-around; align-items: flex-end; padding: 10px 0 20px; }
   .ring-container { position: relative; width: 90px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .ring-svg { width: 70px; height: 70px; transform: rotate(-90deg); }
   .ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
   .ring-val { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; transition: stroke-dasharray 1s ease; }
+  .ring-text { position: absolute; top: 26px; left: 50%; transform: translateX(-50%); font-family: var(--font-tech); font-size: 15px; font-weight: 700; color: var(--text-main); }
   .ring-label { font-size: 11px; color: var(--text-sub); }
-  .ring-text {
-    position: absolute; top: 26px; left: 50%; transform: translateX(-50%);
-    font-family: var(--font-tech); font-size: 15px; font-weight: 700; color: var(--text-main);
-  }
 
-  .stat-summary {
-    background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px;
-    display: flex; justify-content: space-between;
-  }
+  .stat-summary { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; }
   .sum-item { text-align: center; flex: 1; }
   .sum-label { font-size: 11px; color: var(--text-sub); display: block; margin-bottom: 4px;}
   .sum-val { font-size: 16px; font-weight: 700; color: var(--accent); font-family: var(--font-tech); }
 
-  .rank8-card {
-    background: rgba(53, 199, 89, 0.1); border: 1px solid var(--ok);
-    border-radius: 12px; padding: 16px; display: flex;
-    justify-content: space-between; align-items: center; margin-bottom: 10px;
-  }
-  .rank8-label { color: var(--ok); font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px; }
-  .rank8-label::before { content:'★'; }
-  .rank8-value { font-family: var(--font-tech); color: #fff; font-size: 18px; font-weight: 700; }
-  .rank8-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-left: 8px; }
-
-  .toggle-details-btn {
-    width: 100%; background: rgba(255,255,255,0.05); border: none;
-    color: var(--text-sub); padding: 12px; border-radius: 8px;
-    font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
-  }
-  
-  .hidden-details { display: none; margin-top: 10px; animation: slideDown 0.3s ease; }
-  .hidden-details.open { display: block; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-  .detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .detail-table th { text-align: left; color: var(--text-sub); padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-  .detail-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .rank-badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.1); }
-  .rank-badge.s { color: var(--ok); background: rgba(53, 199, 89, 0.15); border: 1px solid var(--ok); }
-  .rank-badge.a { color: var(--warn); background: rgba(255, 179, 0, 0.15); border: 1px solid var(--warn); }
-
   @media (max-width: 900px) {
     body { height: auto; overflow: auto; background: #1a1d26; }
     .app-container { flex-direction: column; height: auto; min-height: 100vh; }
-    
-    .sidebar {
-      position: fixed; top: 0; left: 0; width: 85%; max-width: 320px;
-      height: 100vh; transform: translateX(-100%);
-      box-shadow: 2px 0 20px rgba(0,0,0,0.5); border-right: 1px solid rgba(255,255,255,0.1);
-    }
+    .sidebar { position: fixed; transform: translateX(-100%); width: 85%; max-width: 320px; height: 100vh; }
     .sidebar.active { transform: translateX(0); }
-    .sidebar-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 90;
-      display: none; opacity: 0; transition: opacity 0.3s;
-    }
-    .sidebar-overlay.active { display: block; opacity: 1; }
-    
-    .main-content { overflow: visible; height: auto; }
-    .menu-toggle { display: block; }
-    
-    .dashboard { grid-template-columns: 1fr; padding: 60px 15px 15px; gap: 15px; }
-    
-    .panel { padding: 20px; backdrop-filter: none; min-height: auto; }
-    
-    .notice-panel { padding: 15px 20px; }
-    
-    .top-nav { position: fixed; justify-content: space-between; padding: 10px 15px; background: rgba(15,17,21,0.95); pointer-events: auto; }
-    .nav-controls { background: transparent; border: none; padding: 0; }
-    .menu-title-mobile { display: block; font-weight: 700; color: var(--accent); }
-  }
-  
-  @media (min-width: 901px) {
-      .menu-title-mobile { display: none; }
+    .dashboard { grid-template-columns: 1fr; padding: 60px 15px 15px; }
+    .panel { min-height: auto; }
   }
 
-  #toastWrap {
-    position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-    z-index: 2000; display: flex; flex-direction: column; gap: 8px; width: 90%; pointer-events: none;
-  }
-  .toast {
-    background: rgba(30, 35, 45, 0.95); color: var(--text-main);
-    padding: 12px 20px; border-radius: 12px; font-size: 14px; text-align: center;
-    border: 1px solid var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    opacity: 0; transition: 0.3s;
-  }
+  #toastWrap { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; width: 90%; pointer-events: none; }
+  .toast { background: rgba(30, 35, 45, 0.95); color: var(--text-main); padding: 12px 20px; border-radius: 12px; text-align: center; border: 1px solid var(--accent); opacity: 0; transition: 0.3s; }
 </style>
 </head>
 <body>
@@ -333,17 +243,9 @@
         <div class="brand">꼬비아빠 놀이터</div>
         <div class="menu-toggle" id="closeSidebarBtn" style="font-size:20px; display:none;">✕</div>
       </div>
-      <div class="ver">
-        <span>Date : 2026.02.20</span>
-        <span>Data by. 꼬비아빠</span>
-      </div>
+      <div class="ver"><span>Date : 2026.02.20</span><span>Data by. 꼬비아빠</span></div>
     </div>
-    
-    <div class="search-area">
-      <div class="search-box">
-        <input type="text" id="petSearch" placeholder="페트 이름 검색..." autocomplete="off" />
-      </div>
-    </div>
+    <div class="search-area"><div class="search-box"><input type="text" id="petSearch" placeholder="페트 이름 검색..." autocomplete="off" /></div></div>
     
     <div class="filter-chips" id="chosungTokens" style="padding-bottom:5px; min-height:30px;"></div>
     <div class="filter-chips" id="chosung"></div>
@@ -352,15 +254,12 @@
        <span style="font-size:11px; color:var(--text-sub);">즐겨찾기:</span>
        <div id="favChips" style="display:flex; gap:5px; flex-wrap:wrap;"></div>
     </div>
-
     <div class="pet-list" id="petList"></div>
   </aside>
 
   <!-- 2. 메인 컨텐츠 -->
   <main class="main-content">
-    <!-- 우측 상단 네비게이션 -->
     <nav class="top-nav">
-      <div class="menu-title-mobile">꼬비아빠 놀이터</div>
       <div class="nav-controls">
           <div class="menu-toggle" id="openSidebarBtn" style="margin-right: 10px;">☰</div>
           <button class="admin-btn" id="btnAdmin" title="Admin">★</button>
@@ -368,11 +267,9 @@
     </nav>
 
     <div class="dashboard">
-      
+      <!-- 공지사항 -->
       <section class="panel notice-panel">
-        <div class="notice-header">
-          <div class="notice-title">SYSTEM NOTICE (StoneAge Together)</div>
-        </div>
+        <div class="notice-header"><div class="notice-title">SYSTEM NOTICE (StoneAge Together)</div></div>
         <div class="notice-content">
           - 입력된 페트 능력치에는 오타가 있을 수 있으니 페트 조회 시 게임 내 페트의 초기치 및 성장률이 같은지 확인하세요.<br>
           - 오타가 있다면 말씀 부탁드리며, 해당 계산기는 재미로만 봐주시길 바랍니다. <br>
@@ -383,125 +280,62 @@
       <!-- 입력 패널 -->
       <section class="panel">
         <h2><span id="selectedPetTitle">페트를 선택해주세요</span></h2>
-        
-        <!-- S급 기준 (초기치 / 성장률) -->
         <div class="input-group-title">S급 기준 (초기치 / 성장률)</div>
         <div class="stat-grid">
-          <div class="stat-col">
-            <label>내구력</label>
-            <!-- 브라우저에 따라 ".00"이 생략되는 것을 방지하기 위해 type="text" 적용 -->
-            <div class="stat-box readonly"><input type="text" id="s0_hp" readonly placeholder="-"></div>
-            <div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_hp" readonly placeholder="-"></div>
-          </div>
-          <div class="stat-col">
-            <label>공격력</label>
-            <div class="stat-box readonly"><input type="text" id="s0_atk" readonly placeholder="-"></div>
-            <div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_atk" readonly placeholder="-"></div>
-          </div>
-          <div class="stat-col">
-            <label>방어력</label>
-            <div class="stat-box readonly"><input type="text" id="s0_def" readonly placeholder="-"></div>
-            <div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_def" readonly placeholder="-"></div>
-          </div>
-          <div class="stat-col">
-            <label>순발력</label>
-            <div class="stat-box readonly"><input type="text" id="s0_agi" readonly placeholder="-"></div>
-            <div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_agi" readonly placeholder="-"></div>
-          </div>
+          <div class="stat-col"><label>내구력</label><div class="stat-box readonly"><input type="text" id="s0_hp" readonly placeholder="-"></div><div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_hp" readonly placeholder="-"></div></div>
+          <div class="stat-col"><label>공격력</label><div class="stat-box readonly"><input type="text" id="s0_atk" readonly placeholder="-"></div><div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_atk" readonly placeholder="-"></div></div>
+          <div class="stat-col"><label>방어력</label><div class="stat-box readonly"><input type="text" id="s0_def" readonly placeholder="-"></div><div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_def" readonly placeholder="-"></div></div>
+          <div class="stat-col"><label>순발력</label><div class="stat-box readonly"><input type="text" id="s0_agi" readonly placeholder="-"></div><div class="stat-box readonly" style="margin-top:6px"><input type="text" id="sg_agi" readonly placeholder="-"></div></div>
         </div>
-
         <div class="input-group-title" style="margin-top:20px; color:var(--accent);">Lv.1 페트 능력치 입력</div>
         <div class="stat-grid">
-          <div class="stat-col">
-            <label>내구력</label>
-            <div class="stat-box"><input type="number" id="obs_hp" placeholder="0" inputmode="numeric"></div>
-            <div class="stepper-btn">
-              <button class="s-btn" data-target="obs_hp" data-delta="-1">-1</button>
-              <button class="s-btn" data-target="obs_hp" data-delta="1">+1</button>
-            </div>
-          </div>
-          <div class="stat-col">
-            <label>공격력</label>
-            <div class="stat-box"><input type="number" id="obs_atk" placeholder="0" inputmode="numeric"></div>
-            <div class="stepper-btn">
-              <button class="s-btn" data-target="obs_atk" data-delta="-1">-1</button>
-              <button class="s-btn" data-target="obs_atk" data-delta="1">+1</button>
-            </div>
-          </div>
-          <div class="stat-col">
-            <label>방어력</label>
-            <div class="stat-box"><input type="number" id="obs_def" placeholder="0" inputmode="numeric"></div>
-            <div class="stepper-btn">
-              <button class="s-btn" data-target="obs_def" data-delta="-1">-1</button>
-              <button class="s-btn" data-target="obs_def" data-delta="1">+1</button>
-            </div>
-          </div>
-          <div class="stat-col">
-            <label>순발력</label>
-            <div class="stat-box"><input type="number" id="obs_agi" placeholder="0" inputmode="numeric"></div>
-            <div class="stepper-btn">
-              <button class="s-btn" data-target="obs_agi" data-delta="-1">-1</button>
-              <button class="s-btn" data-target="obs_agi" data-delta="1">+1</button>
-            </div>
-          </div>
+          <div class="stat-col"><label>내구력</label><div class="stat-box"><input type="number" id="obs_hp" placeholder="0"></div><div class="stepper-btn"><button class="s-btn" data-target="obs_hp" data-delta="-1">-1</button><button class="s-btn" data-target="obs_hp" data-delta="1">+1</button></div></div>
+          <div class="stat-col"><label>공격력</label><div class="stat-box"><input type="number" id="obs_atk" placeholder="0"></div><div class="stepper-btn"><button class="s-btn" data-target="obs_atk" data-delta="-1">-1</button><button class="s-btn" data-target="obs_atk" data-delta="1">+1</button></div></div>
+          <div class="stat-col"><label>방어력</label><div class="stat-box"><input type="number" id="obs_def" placeholder="0"></div><div class="stepper-btn"><button class="s-btn" data-target="obs_def" data-delta="-1">-1</button><button class="s-btn" data-target="obs_def" data-delta="1">+1</button></div></div>
+          <div class="stat-col"><label>순발력</label><div class="stat-box"><input type="number" id="obs_agi" placeholder="0"></div><div class="stepper-btn"><button class="s-btn" data-target="obs_agi" data-delta="-1">-1</button><button class="s-btn" data-target="obs_agi" data-delta="1">+1</button></div></div>
         </div>
-
-        <div class="action-btns">
-          <button class="btn-main btn-reset" id="btnReset">리셋</button>
-          <button class="btn-main btn-calc" id="btnCalc">분석 시작</button>
-        </div>
+        <div class="action-btns"><button class="btn-main btn-reset" id="btnReset">리셋</button><button class="btn-main btn-calc" id="btnCalc">분석 시작</button></div>
       </section>
 
       <!-- 결과 패널 (HUD 스타일) -->
       <section class="panel result-panel">
         <h2>ANALYSIS HUD</h2>
-        
         <div class="hud-rings">
-          <!-- 성공 확률 -->
           <div class="ring-container">
-            <svg class="ring-svg" viewBox="0 0 36 36">
-              <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              <path id="ringSuccess" class="ring-val" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            </svg>
-            <div class="ring-text" id="kpiSuccess">0%</div>
-            <span class="ring-label">8등급 확률</span>
+            <svg class="ring-svg" viewBox="0 0 36 36"><path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path id="ringSuccess" class="ring-val" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>
+            <div class="ring-text" id="kpiSuccess">0%</div><span class="ring-label">8등급 확률</span>
           </div>
-
-          <!-- 기대값 -->
           <div class="ring-container">
-            <svg class="ring-svg" viewBox="0 0 36 36">
-              <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              <path id="ringTries" class="ring-val" style="stroke:#ffb300" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            </svg>
-            <div class="ring-text" id="kpiTries">-</div>
-            <span class="ring-label">시도 횟수</span>
+            <svg class="ring-svg" viewBox="0 0 36 36"><path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /><path id="ringTries" class="ring-val" style="stroke:#ffb300" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>
+            <div class="ring-text" id="kpiTries">-</div><span class="ring-label">시도 횟수</span>
           </div>
         </div>
-
         <div class="stat-summary">
-          <div class="sum-item">
-            <span class="sum-label">출현 확률</span>
-            <span class="sum-val" id="kpiAppear" style="font-size:16px">-</span>
-          </div>
-          <div class="sum-item">
-            <span class="sum-label">총 경우의 수</span>
-            <span class="sum-val" id="totMatches">-</span>
-          </div>
-          <div class="sum-item">
-            <span class="sum-label">8등급 매칭</span>
-            <span class="sum-val" id="rank8Matches">-</span>
-          </div>
+          <div class="sum-item"><span class="sum-label">출현 확률</span><span class="sum-val" id="kpiAppear">-</span></div>
+          <div class="sum-item"><span class="sum-label">총 경우의 수</span><span class="sum-val" id="totMatches">-</span></div>
+          <div class="sum-item"><span class="sum-label">8등급 매칭</span><span class="sum-val" id="rank8Matches">-</span></div>
         </div>
-
         <div style="margin-top:20px; flex:1; display:flex; flex-direction:column;">
           <div class="input-group-title">등급 분포</div>
-          
-          <div id="dist">
-            <div style="text-align:center; color:var(--text-sub); padding:20px;">결과가 여기에 표시됩니다.</div>
-          </div>
+          <div id="dist"><div style="text-align:center; color:var(--text-sub); padding:20px;">결과가 여기에 표시됩니다.</div></div>
         </div>
-
       </section>
+
+      <!-- [통합 기능] 페트잡이 로그 알리미 -->
+      <section class="panel log-panel">
+        <div class="log-header-row">
+            <h2>LOG MONITORING</h2>
+            <div class="log-controls">
+                <div class="status-indicator"><div id="statusDot" class="dot"></div> <span id="dirStatus">폴더 선택 대기...</span></div>
+                <button class="btn-dir-picker" id="btnPicker">📂 Chat 폴더 선택</button>
+                <button id="btnSoundTest" style="padding:8px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-sub); border-radius:6px; cursor:pointer; font-size:12px;">🔊 테스트</button>
+            </div>
+        </div>
+        <div class="log-container" id="logDisplay">
+            <div style="color:var(--text-sub); text-align:center; padding-top:60px;">로그 감시를 시작하려면 게임 폴더 내 'Chat' 폴더를 선택하세요.</div>
+        </div>
+      </section>
+
     </div>
   </main>
 </div>
@@ -509,73 +343,131 @@
 <div id="toastWrap"></div>
 
 <script>
-/* ========= 데이터 로딩 & 유틸 ========= */
-const LOCAL_PETS = "data/pets.json";
-const GH_OWNER  = "kkoby-daddy";
-const GH_REPO   = "kkoby-daddy.github.io/kkoby_together/";
-const GH_BRANCH = "main";
-const PETS_PATH = "data/pets.json";
-const REMOTE_PETS = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${PETS_PATH}`;
+/* ========= 전역 데이터 & 설정 ========= */
+const REMOTE_PETS = `https://raw.githubusercontent.com/kkoby-daddy/kkoby_together/main/data/pets.json`;
 const R8_JSON_CANDIDATES = [
   "data/guaranteed_rank8.full.json",
   "data/guaranteed_rank8.min.json",
   "guaranteed_rank8.sample8.json"
 ];
-const LS_TABLE = "TogetherPetTable_cache";
-const TOTAL = 178750;
+const ALERT_SOUND_URL = 'https://raw.githubusercontent.com/kkoby-daddy/kkoby_together/main/sam_02.wav';
+const alertAudio = new Audio(ALERT_SOUND_URL);
+const decoder = new TextDecoder('euc-kr'); 
+const BAG_FULL_REGEX = /가방\s*:\s*\[\s*0\s*\/\s*5\s*\]/;
+const CAPTURE_REGEX = /포획하였습니다|획득하였습니다|나타났다|주웠습니다/;
 const FAV_LS_KEY = "pet_favs_v1";
 
-let GLOBAL_TABLE = {};
-let ALL_NAMES = [];
-let R8MAP = {};
-let FAVS = [];
+let GLOBAL_TABLE = {}, ALL_NAMES = [], R8MAP = {}, FAVS = [];
+let dirHandle = null, lastLogText = "", lastChatFile = "";
+let selectedName = null, currentChosung = "";
 
-function getJSONLS(key, fallback={}){ try{ return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback)); }catch{ return fallback; } }
-function setJSONLS(key, obj){ localStorage.setItem(key, JSON.stringify(obj)); }
-function fetchJSON(url){ return fetch(url+`?v=${Date.now()}`,{cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.json();}); }
+/* ========= 유틸리티 ========= */
 function showToast(msg){
   const wrap = document.getElementById("toastWrap");
   const t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
-  wrap.appendChild(t);
-  void t.offsetWidth; t.style.opacity = '1'; t.style.transform = 'translateY(0)';
-  setTimeout(()=>{ t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; setTimeout(()=>t.remove(), 300); }, 2000);
+  wrap.appendChild(t); void t.offsetWidth; t.style.opacity = '1';
+  setTimeout(()=>{ t.style.opacity = '0'; setTimeout(()=>t.remove(), 300); }, 2000);
 }
 
-async function loadGlobalTable(){
-  try{
-    const obj = await fetchJSON(REMOTE_PETS);
-    if(typeof obj!=="object" || Array.isArray(obj)) throw 0;
-    GLOBAL_TABLE = obj; setJSONLS(LS_TABLE, obj);
-  }catch{
-    try{
-      const obj = await fetchJSON(LOCAL_PETS);
-      GLOBAL_TABLE = obj; setJSONLS(LS_TABLE, obj);
-    }catch{
-      GLOBAL_TABLE = getJSONLS(LS_TABLE, {});
-      console.warn("[pets] remote/local 모두 실패 → localStorage 캐시 사용");
-    }
-  }
-  ALL_NAMES = Object.keys(GLOBAL_TABLE).sort((a,b)=>a.localeCompare(b,'ko'));
-  FAVS = loadFavs().filter(n => GLOBAL_TABLE[n]);
-  saveFavs();
-  renderFavChips();
+/* 툴팁 로직 */
+const tipEl = document.getElementById('floatingTip');
+let tipTimer = null;
+function hideTip(){ tipEl.classList.remove('show'); }
+function showTip(target){
+  const text = target.getAttribute('data-tip');
+  if(!text){ hideTip(); return; }
+  const lines = String(text).split('\n');
+  tipEl.textContent = '';
+  lines.forEach((line,i)=>{
+    tipEl.appendChild(document.createTextNode(line));
+    if(i < lines.length-1) tipEl.appendChild(document.createElement('br'));
+  });
+  tipEl.classList.add('show');
+  const rect = target.getBoundingClientRect();
+  let left = rect.left + rect.width/2 - tipEl.offsetWidth/2;
+  left = Math.max(10, Math.min(left, window.innerWidth - tipEl.offsetWidth - 10));
+  let top = rect.top - tipEl.offsetHeight - 10;
+  if(top < 10) top = rect.bottom + 10;
+  tipEl.style.left = `${left}px`;
+  tipEl.style.top  = `${top}px`;
+}
+document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip'); if(t) showTip(t); }, true);
+document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
+window.addEventListener('scroll', hideTip, true);
+
+/* ========= 로그 알리미 기능 ========= */
+document.getElementById('btnSoundTest').onclick = () => {
+    alertAudio.currentTime = 0;
+    alertAudio.play().then(() => showToast("알림음 테스트 성공")).catch(() => showToast("사운드 재생이 차단됨"));
+};
+
+document.getElementById('btnPicker').onclick = async () => {
+  try {
+    dirHandle = await window.showDirectoryPicker();
+    document.getElementById('dirStatus').textContent = `감시 중: ${dirHandle.name}`;
+    document.getElementById('statusDot').classList.add('active');
+    document.getElementById('logDisplay').innerHTML = `<div style="color:var(--ok); text-align:center; padding-top:60px;">연결됨. 게임 로그 대기 중...</div>`;
+    alertAudio.load();
+    startMonitoring();
+    showToast("로그 감시를 시작합니다.");
+  } catch (e) { showToast("폴더 선택이 취소되었습니다."); }
+};
+
+async function startMonitoring() {
+  setInterval(async () => {
+    if(!dirHandle) return;
+    try {
+      let latestEntry = null; let latestTime = 0;
+      for await (const entry of dirHandle.values()) {
+        if (entry.kind === 'file' && entry.name.toUpperCase().startsWith('CHAT_')) {
+          const file = await entry.getFile();
+          if (file.lastModified > latestTime) { latestTime = file.lastModified; latestEntry = entry; }
+        }
+      }
+      if (latestEntry) {
+        const file = await latestEntry.getFile();
+        const buffer = await file.arrayBuffer();
+        const text = decoder.decode(buffer);
+        if (latestEntry.name !== lastChatFile) {
+          lastChatFile = latestEntry.name;
+          processLogs(text.trim().split('\n').slice(-10).join('\n'), true); 
+          lastLogText = text;
+        } else if (text.length > lastLogText.length) {
+          const newPart = text.substring(lastLogText.length);
+          lastLogText = text;
+          processLogs(newPart, false);
+        }
+      }
+    } catch (err) { console.error(err); }
+  }, 2000);
 }
 
-async function loadRank8Map(){
-  for(const path of R8_JSON_CANDIDATES){
-    try{
-      const m = await fetchJSON(path);
-      if (typeof m==="object" && !Array.isArray(m)){ R8MAP = m; return; }
-    }catch{}
-  }
-  R8MAP = {};
+function processLogs(newText, isInitial) {
+  const lines = newText.split('\n').filter(l => l.trim().length > 0);
+  lines.forEach(line => {
+    const isFullBag = BAG_FULL_REGEX.test(line);
+    const isCapture = CAPTURE_REGEX.test(line);
+    if (isFullBag && !isInitial) { alertAudio.currentTime = 0; alertAudio.play().catch(() => {}); }
+    addLogUI(line, isFullBag, isCapture);
+  });
 }
 
-function loadFavs(){ try{ const arr = JSON.parse(localStorage.getItem(FAV_LS_KEY)||"[]"); return Array.isArray(arr) ? arr.slice(0,5) : []; }catch{ return []; } }
-function saveFavs(){ localStorage.setItem(FAV_LS_KEY, JSON.stringify(FAVS)); }
-function isFav(name){ return FAVS.includes(name); }
-function toggleFav(n){ if(isFav(n)) FAVS = FAVS.filter(x=>x!==n); else { if(FAVS.length>=5){ showToast("최대 5개까지 가능"); return; } FAVS.push(n); } saveFavs(); renderFavChips(); renderPetList(); }
+function addLogUI(msg, isBad, isGood) {
+  const container = document.getElementById('logDisplay');
+  if (container.innerText.includes("시작하려면") || container.innerText.includes("연결됨")) container.innerHTML = "";
+  const div = document.createElement('div'); div.className = 'log-entry';
+  const timeMatch = msg.match(/\[(\d{2}:\d{2}:\d{2})\]/);
+  const timeStr = timeMatch ? timeMatch[1] : new Date().toLocaleTimeString('ko-KR', {hour12:false});
+  const cleanMsg = msg.replace(/\[\d{2}:\d{2}:\d{2}\]/, "").trim();
+  let msgClass = "log-msg";
+  if (isBad) msgClass += " highlight"; else if (isGood) msgClass += " capture";
+  div.innerHTML = `<span class="log-time">[${timeStr}]</span><span class="${msgClass}">${cleanMsg}</span>`;
+  container.appendChild(div);
+  if (container.children.length > 20) container.removeChild(container.firstElementChild);
+  container.scrollTop = container.scrollHeight;
+}
 
+/* ========= 초성 필터 로직 ========= */
 const CHO_CODE = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const CHO_SIMPLE = (c)=>({"ㄲ":"ㄱ","ㄸ":"ㄷ","ㅃ":"ㅂ","ㅆ":"ㅅ","ㅉ":"ㅈ"}[c]||c);
 function getChosung(str){
@@ -589,67 +481,20 @@ function getChosung(str){
   return out;
 }
 
-/* 툴팁 로직 */
-const tipEl = document.getElementById('floatingTip');
-let tipTimer = null;
-
-function hideTip(){ tipEl.classList.remove('show'); }
-function showTip(target){
-  const text = target.getAttribute('data-tip');
-  if(!text){ hideTip(); return; }
-  const lines = String(text).split('\n');
-  tipEl.textContent = '';
-  lines.forEach((line,i)=>{
-    tipEl.appendChild(document.createTextNode(line));
-    if(i < lines.length-1) tipEl.appendChild(document.createElement('br'));
-  });
-  tipEl.classList.add('show');
-  
-  const rect = target.getBoundingClientRect();
-  const tw = tipEl.offsetWidth;
-  const th = tipEl.offsetHeight;
-  let left = rect.left + rect.width/2 - tw/2;
-  left = Math.max(10, Math.min(left, window.innerWidth - tw - 10));
-  let top = rect.top - th - 10;
-  if(top < 10) top = rect.bottom + 10;
-  
-  tipEl.style.left = `${left}px`;
-  tipEl.style.top  = `${top}px`;
-}
-
-document.addEventListener('mouseover', (e)=>{
-  const t = e.target.closest('.tip'); if(t) showTip(t);
-}, true);
-document.addEventListener('mouseout', (e)=>{
-  const t = e.target.closest('.tip'); if(t) hideTip();
-}, true);
-document.addEventListener('touchstart', (e)=>{
-  const t = e.target.closest('.tip'); 
-  if(t) { e.stopPropagation(); showTip(t); clearTimeout(tipTimer); tipTimer = setTimeout(hideTip, 2000); }
-}, {passive:true});
-window.addEventListener('scroll', hideTip, true);
-
-/* ========= UI 제어 ========= */
+const CHO_BUTTONS = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const chosungContainer = document.getElementById('chosung');
 const chosungTokens = document.getElementById('chosungTokens');
-const petListEl = document.getElementById('petList');
-const searchInput = document.getElementById('petSearch');
-let currentChosung = "";
-let selectedName = null;
-
-const CHO_BUTTONS = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 
 function renderChosungTokens(){
   chosungTokens.innerHTML = "";
   const label = document.createElement('div'); label.className = 'chip label'; label.textContent = "선택한 초성 :";
   chosungTokens.appendChild(label);
-  
   if(!currentChosung) return;
   for(const ch of currentChosung){
-    const t = document.createElement('div'); t.className = 'chip active'; t.style.cursor = 'default'; t.textContent = ch;
+    const t = document.createElement('div'); t.className = 'chip active'; t.textContent = ch;
     chosungTokens.appendChild(t);
   }
-  const clearBtn = document.createElement('div'); clearBtn.className = 'chip'; clearBtn.textContent = '↺'; clearBtn.title = "초성 초기화";
+  const clearBtn = document.createElement('div'); clearBtn.className = 'chip'; clearBtn.textContent = '↺';
   clearBtn.onclick = () => { currentChosung = ""; renderPetList(); renderChosungTokens(); Array.from(chosungContainer.children).forEach(el=>el.classList.remove('active')); };
   chosungTokens.appendChild(clearBtn);
 }
@@ -663,6 +508,12 @@ CHO_BUTTONS.forEach(c => {
   chosungContainer.appendChild(chip);
 });
 
+/* ========= 즐겨찾기 로직 ========= */
+function loadFavs(){ try{ const arr = JSON.parse(localStorage.getItem(FAV_LS_KEY)||"[]"); return Array.isArray(arr) ? arr.slice(0,5) : []; }catch{ return []; } }
+function saveFavs(){ localStorage.setItem(FAV_LS_KEY, JSON.stringify(FAVS)); }
+function isFav(name){ return FAVS.includes(name); }
+function toggleFav(n){ if(isFav(n)) FAVS = FAVS.filter(x=>x!==n); else { if(FAVS.length>=5){ showToast("최대 5개까지 가능"); return; } FAVS.push(n); } saveFavs(); renderFavChips(); renderPetList(); }
+
 function renderFavChips(){
   const box = document.getElementById('favChips'); box.innerHTML = "";
   FAVS.forEach(n => {
@@ -672,281 +523,156 @@ function renderFavChips(){
   });
 }
 
-function renderPetList() {
-  const kw = searchInput.value.trim();
-  const list = ALL_NAMES.filter(n => {
+/* ========= 페트 계산기 기능 ========= */
+async function loadData(){
+  try {
+    const res = await fetch(REMOTE_PETS+`?v=${Date.now()}`);
+    GLOBAL_TABLE = await res.json();
+    ALL_NAMES = Object.keys(GLOBAL_TABLE).sort((a,b)=>a.localeCompare(b,'ko'));
+    FAVS = loadFavs().filter(n => GLOBAL_TABLE[n]);
+    saveFavs();
+    renderFavChips();
+    renderPetList();
+  } catch(e) { showToast("데이터 로딩 실패"); }
+}
+
+async function loadRank8Map(){
+  for(const path of R8_JSON_CANDIDATES){
+    try{
+      const res = await fetch(`https://raw.githubusercontent.com/kkoby-daddy/kkoby_together/main/${path}`);
+      const m = await res.json();
+      if (typeof m==="object" && !Array.isArray(m)){ R8MAP = m; return; }
+    }catch{}
+  }
+}
+
+function selectPetName(n){
+  selectedName=n; renderPetList();
+  const row=GLOBAL_TABLE[n]||null;
+  document.getElementById('selectedPetTitle').textContent = n;
+  if(row?.s0){
+    document.getElementById('s0_hp').value = Number(row.s0.hp).toFixed(2);
+    document.getElementById('s0_atk').value = Number(row.s0.atk).toFixed(2);
+    document.getElementById('s0_def').value = Number(row.s0.def).toFixed(2);
+    document.getElementById('s0_agi').value = Number(row.s0.agi).toFixed(2);
+    document.getElementById('obs_hp').value = Math.floor(row.s0.hp); 
+    document.getElementById('obs_atk').value = Math.floor(row.s0.atk);
+    document.getElementById('obs_def').value = Math.floor(row.s0.def); 
+    document.getElementById('obs_agi').value = Math.floor(row.s0.agi);
+  }
+  if(row?.sg){
+    document.getElementById('sg_hp').value = Number(row.sg.hp).toFixed(2);
+    document.getElementById('sg_atk').value = Number(row.sg.atk).toFixed(2);
+    document.getElementById('sg_def').value = Number(row.sg.def).toFixed(2);
+    document.getElementById('sg_agi').value = Number(row.sg.agi).toFixed(2);
+  }
+  resetResult();
+}
+
+function renderPetList(){
+  const kw = document.getElementById('petSearch').value.trim();
+  const listEl = document.getElementById('petList'); listEl.innerHTML = "";
+  const filtered = ALL_NAMES.filter(n => {
     const matchKw = kw ? n.includes(kw) : true;
     const matchCho = currentChosung ? getChosung(n).startsWith(currentChosung) : true;
     return matchKw && matchCho;
   });
-
-  petListEl.innerHTML = "";
-  if(list.length === 0) { petListEl.innerHTML = '<div style="color:var(--text-sub); text-align:center; padding:20px;">검색 결과 없음</div>'; return; }
-
-  list.forEach(n => {
+  filtered.forEach(n => {
     const item = document.createElement('div'); item.className = 'pet-item';
     if(selectedName === n) item.classList.add('selected');
-    
-    const nameSpan = document.createElement('span'); 
-    nameSpan.className = 'pet-name'; 
-    nameSpan.textContent = n;
+    const nameSpan = document.createElement('span'); nameSpan.className = 'pet-name'; nameSpan.textContent = n;
     item.appendChild(nameSpan);
-
-    const rightDiv = document.createElement('div');
-    rightDiv.className = 'pet-right';
-
+    const rightDiv = document.createElement('div'); rightDiv.className = 'pet-right';
     const r8 = R8MAP[n];
     if (r8 && (Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8.length : (r8.length||0))) {
-        const badge = document.createElement('span');
-        badge.className = 'badge-r8 tip';
-        badge.textContent = '100%';
-        
+        const badge = document.createElement('span'); badge.className = 'badge-r8 tip'; badge.textContent = '100%';
         const sets = Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8 : r8;
-        const maxShow = 15;
-        const preview = sets.slice(0, maxShow).map(a=>`(${a[0]},${a[1]},${a[2]},${a[3]})`).join(' · ');
-        const more = sets.length>maxShow ? ` 외 ${sets.length-maxShow}세트` : '';
-        const tipText = `8등급 보장 초기치\n${preview}${more}`;
-        badge.setAttribute('data-tip', tipText);
-        
+        badge.setAttribute('data-tip', `8등급 보장 초기치\n${sets.slice(0,10).map(a=>`(${a[0]},${a[1]},${a[2]},${a[3]})`).join(' · ')}`);
         badge.addEventListener('click', (e) => { e.stopPropagation(); });
         rightDiv.appendChild(badge);
     }
-    
-    const star = document.createElement('span'); 
-    star.className = 'fav-icon ' + (isFav(n)?'active':''); 
-    star.textContent = '★';
+    const star = document.createElement('span'); star.className = 'fav-icon ' + (isFav(n)?'active':''); star.textContent = '★';
     star.onclick = (e) => { e.stopPropagation(); toggleFav(n); };
     rightDiv.appendChild(star);
-
     item.appendChild(rightDiv);
-    
     item.onclick = () => { selectPetName(n); closeSidebar(); };
-    petListEl.appendChild(item);
+    listEl.appendChild(item);
   });
 }
-searchInput.addEventListener('input', renderPetList);
 
-/* ========= 계산 로직 ========= */
-const ESET = Array.from({length: ((575-435)/5)+1 }, (_,i) => 575 - i*5);
+document.getElementById('petSearch').addEventListener('input', renderPetList);
 
-function solveUFromSG_JJYAL(SG, e){
-  try{
-    if(!SG || ![SG.hp,SG.atk,SG.def,SG.agi].every(Number.isFinite)) return null;
-    Decimal.set({ precision:50, rounding: Decimal.ROUND_HALF_UP });
-    const eD = new Decimal(e); const f  = eD.dividedBy(10000);
-    const d  = new Decimal(SG.agi).times(10000).dividedBy(eD).minus(2.5);
-    const dRound = d.round(); const dPlus25 = dRound.plus(2.5);
-    const rhs1 = new Decimal(SG.hp).minus( dPlus25.times(f) ).dividedBy(f);
-    const rhs2 = new Decimal(SG.atk).minus( dPlus25.times(f).times(0.05) ).dividedBy(f);
-    const rhs3 = new Decimal(SG.def).minus( dPlus25.times(f).times(0.05) ).dividedBy(f);
+document.getElementById('btnCalc').onclick = () => {
+  if(!selectedName) return showToast("페트를 선택하세요");
+  const obs = ['hp','atk','def','agi'].map(k => parseInt(document.getElementById('obs_'+k).value));
+  const row = GLOBAL_TABLE[selectedName];
+  const res = calculate_logic({k:row.k, u:row.u}, obs);
+  renderResult(res);
+};
 
-    let A = [[ new Decimal(4),new Decimal(1),new Decimal(1), rhs1 ],[ new Decimal(0.1), new Decimal(1), new Decimal(0.1), rhs2 ],[ new Decimal(0.1), new Decimal(0.1), new Decimal(1), rhs3 ]];
-    for(let i=0;i<3;i++){
-      let mr=i; let mv=A[i][i].abs();
-      for(let j=i+1;j<3;j++){ const t=A[j][i].abs(); if(t.greaterThan(mv)){mr=j; mv=t;} }
-      if(mr!==i){ const tmp=A[i]; A[i]=A[mr]; A[mr]=tmp; }
-      const piv=A[i][i]; for(let j=i;j<4;j++) A[i][j]=A[i][j].dividedBy(piv);
-      for(let k=0;k<3;k++){ if(k===i) continue; const fac=A[k][i]; for(let j=i;j<4;j++) A[k][j]=A[k][j].minus( fac.times(A[i][j]) ); }
-    }
-    const u_hp = A[0][3].minus(2.5).round(); const u_atk = A[1][3].minus(2.5).round(); const u_def = A[2][3].minus(2.5).round(); const u_agi = dRound;
-    return { u:{hp:+u_hp, atk:+u_atk, def:+u_def, agi:+u_agi}, e };
-  }catch(e){ return null; }
-}
-function s0_from_k_u_jjyal(k,u){
-  const fac = k/100;
-  const v = [u.hp, u.atk, u.def, u.agi].map(x => (x+2.5)*fac);
-  return [Math.floor(v[0]*4+v[1]+v[2]+v[3]), Math.floor(v[0]*0.1+v[1]+v[2]*0.1+v[3]*0.05), Math.floor(v[0]*0.1+v[1]*0.1+v[2]+v[3]*0.05), Math.floor(v[3])];
-}
-function inferKU_JJYAL(S0, SG){
-  const S0int = S0.map(x=>Math.floor(x)); let best=null;
-  for(const e of ESET){
-    const sol = solveUFromSG_JJYAL(SG, e); if(!sol) continue;
-    for(let k=10;k<=100;k++){
-      const s = s0_from_k_u_jjyal(k, sol.u);
-      const l1 = s.reduce((a,c,i)=>a+Math.abs(c-S0int[i]),0);
-      if(l1===0) return {k, u:sol.u};
-      if(!best || l1<best.l1) best={k, u:sol.u, l1};
-    }
-  }
-  return best;
-}
-function enumerate_jjyal(pku, obs){
+function calculate_logic(pku, obs){
+  Decimal.set({ precision:20, rounding: Decimal.ROUND_HALF_UP });
   const k = new Decimal(pku.k), fac = k.dividedBy(100), u = pku.u;
   let matches = 0, rank8 = 0, dist = {};
   for(let ar=-2; ar<=2; ar++) for(let dr=-2; dr<=2; dr++) for(let gr=-2; gr<=2; gr++) for(let hr=-2; hr<=2; hr++){
     for(let ab=0; ab<=10; ab++) for(let db=0; db<=10; db++) for(let gb=0; gb<=10; gb++){
-      const hb = 10 - ab - db - gb; if(hb < 0 || hb > 10) continue;
+      const hb = 10-ab-db-gb; if(hb<0 || hb>10) continue;
       const iH = new Decimal(u.hp+hr+hb).times(fac), iA = new Decimal(u.atk+ar+ab).times(fac);
       const iD = new Decimal(u.def+dr+db).times(fac), iG = new Decimal(u.agi+gr+gb).times(fac);
-      
       if(iG.floor().toNumber() !== obs[3]) continue;
       if(iH.times(4).plus(iA).plus(iD).plus(iG).floor().toNumber() !== obs[0]) continue;
       if(iH.times(0.1).plus(iA).plus(iD.times(0.1)).plus(iG.times(0.05)).floor().toNumber() !== obs[1]) continue;
       if(iH.times(0.1).plus(iA.times(0.1)).plus(iD).plus(iG.times(0.05)).floor().toNumber() !== obs[2]) continue;
-
-      matches++; const r = ar + dr + gr + hr; dist[r] = (dist[r]||0) + 1; if(r === 8) rank8++;
+      matches++; const r = ar+dr+gr+hr; dist[r]=(dist[r]||0)+1; if(r===8) rank8++;
     }
   }
   return {matches, rank8, dist};
 }
 
-/* ========= Interaction & Bridge ========= */
-function selectPetName(n){
-  selectedName=n; renderPetList();
-  const row=GLOBAL_TABLE[n]||null;
-  document.getElementById('selectedPetTitle').textContent = n;
-
-  if(row?.s0){
-    // [수정] S급 기준 값들을 강제로 소수점 둘째자리까지 표기 (.toFixed(2) 사용)
-    document.getElementById('s0_hp').value = Number(row.s0.hp).toFixed(2);
-    document.getElementById('s0_atk').value = Number(row.s0.atk).toFixed(2);
-    document.getElementById('s0_def').value = Number(row.s0.def).toFixed(2);
-    document.getElementById('s0_agi').value = Number(row.s0.agi).toFixed(2);
-    
-    // 관측치(Lv.1 페트 능력치)는 게임 입력값이므로 정수 유지
-    document.getElementById('obs_hp').value = Math.floor(row.s0.hp); 
-    document.getElementById('obs_atk').value = Math.floor(row.s0.atk);
-    document.getElementById('obs_def').value = Math.floor(row.s0.def); 
-    document.getElementById('obs_agi').value = Math.floor(row.s0.agi);
-  } else {
-    ['s0_hp','s0_atk','s0_def','s0_agi','obs_hp','obs_atk','obs_def','obs_agi'].forEach(id=>document.getElementById(id).value="");
-  }
-  if(row?.sg){
-    // [수정] 성장률 역시 소수점 둘째자리 표기
-    document.getElementById('sg_hp').value = Number(row.sg.hp).toFixed(2);
-    document.getElementById('sg_atk').value = Number(row.sg.atk).toFixed(2);
-    document.getElementById('sg_def').value = Number(row.sg.def).toFixed(2);
-    document.getElementById('sg_agi').value = Number(row.sg.agi).toFixed(2);
-  } else {
-    ['sg_hp','sg_atk','sg_def','sg_agi'].forEach(id=>document.getElementById(id).value="");
-  }
-  resetResult();
+function renderResult(res) {
+  const m = res.matches, r8 = res.rank8;
+  const pct = m ? (r8/m*100) : 0;
+  const tries = pct > 0 ? (100/pct) : Infinity;
+  document.getElementById('ringSuccess').style.strokeDasharray = `${pct.toFixed(1)}, 100`;
+  document.getElementById('kpiSuccess').textContent = pct.toFixed(2) + "%";
+  document.getElementById('kpiTries').textContent = Number.isFinite(tries) ? Math.round(tries).toLocaleString() : "-";
+  document.getElementById('totMatches').textContent = m.toLocaleString();
+  document.getElementById('rank8Matches').textContent = r8.toLocaleString();
+  let html = `<div class="rank8-card"><div class="rank8-label">8등급</div><div class="rank8-value">${r8.toLocaleString()}개</div></div>`;
+  document.getElementById('dist').innerHTML = html;
 }
-
-document.getElementById('btnCalc').addEventListener('click', () => {
-  if(!selectedName) { showToast("먼저 페트를 목록에서 선택해주세요!"); openSidebar(); return; }
-  const obs = [
-    parseInt(document.getElementById('obs_hp').value), parseInt(document.getElementById('obs_atk').value),
-    parseInt(document.getElementById('obs_def').value), parseInt(document.getElementById('obs_agi').value)
-  ];
-  if(obs.some(isNaN)){ showToast("모든 능력치를 입력해주세요."); return; }
-  
-  const row = GLOBAL_TABLE[selectedName];
-  if(!row) return;
-
-  let k=row.k, u=row.u;
-  if(!k || !u){
-      const fit = inferKU_JJYAL([row.s0.hp, row.s0.atk, row.s0.def, row.s0.agi], row.sg);
-      if(!fit){ showToast("성장률 데이터를 통한 추정에 실패했습니다."); return; }
-      k=fit.k; u=fit.u;
-  }
-  
-  setTimeout(() => {
-    const res = enumerate_jjyal({k,u}, obs);
-    renderResult(res);
-  }, 10);
-});
-
-document.getElementById('btnReset').addEventListener('click', () => {
-    selectedName = null;
-    document.getElementById('selectedPetTitle').textContent = "페트를 선택해주세요";
-    ['s0_hp','s0_atk','s0_def','s0_agi','sg_hp','sg_atk','sg_def','sg_agi','obs_hp','obs_atk','obs_def','obs_agi'].forEach(id=>document.getElementById(id).value="");
-    resetResult();
-});
 
 function resetResult() {
     document.getElementById('kpiSuccess').textContent = "0%"; document.getElementById('kpiTries').textContent = "-";
     document.getElementById('ringSuccess').style.strokeDasharray = "0, 100"; document.getElementById('ringTries').style.strokeDasharray = "0, 100";
-    document.getElementById('kpiAppear').textContent = "-"; document.getElementById('totMatches').textContent = "-"; document.getElementById('rank8Matches').textContent = "-";
-    document.getElementById('dist').innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px;">분석 대기 중...</div>';
+    document.getElementById('totMatches').textContent = "-"; document.getElementById('rank8Matches').textContent = "-";
+    document.getElementById('dist').innerHTML = '<div style="text-align:center; color:var(--text-sub); padding:20px;">결과가 여기에 표시됩니다.</div>';
 }
 
-function renderResult(res) {
-    const matches = res.matches|0;
-    const rank8 = res.rank8|0;
-    const successPct = matches ? (rank8/matches*100) : 0;
-    const appear = matches/TOTAL*100;
-    const tries = successPct > 0 ? (100/successPct) : Infinity;
-
-    document.getElementById('ringSuccess').style.strokeDasharray = `${Math.min(successPct, 100).toFixed(1)}, 100`;
-    const tryGauge = Math.min((tries / 200) * 100, 100);
-    document.getElementById('ringTries').style.strokeDasharray = `${tryGauge.toFixed(1)}, 100`;
-    const tryColor = tries <= 5 ? 'var(--ok)' : (tries <= 20 ? 'var(--warn)' : 'var(--bad)');
-    document.getElementById('ringTries').style.stroke = tryColor;
-
-    document.getElementById('kpiSuccess').textContent = successPct.toFixed(2) + "%";
-    document.getElementById('kpiTries').textContent = Number.isFinite(tries) ? Math.round(tries).toLocaleString() : "∞";
-    document.getElementById('kpiAppear').textContent = appear.toFixed(4) + "%";
-    document.getElementById('totMatches').textContent = matches.toLocaleString();
-    document.getElementById('rank8Matches').textContent = rank8.toLocaleString();
-
-    const entries = Object.entries(res.dist).map(([r,c]) => ({r:parseInt(r), c})).sort((a,b) => b.r - a.r);
-
-    if(entries.length === 0) {
-        document.getElementById('dist').innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sub);">일치하는 결과가 없습니다.</div>`;
-        return;
-    }
-
-    let html = "";
-    const grade8 = entries.find(e => e.r === 8);
-    const count8 = grade8 ? grade8.c : 0;
-    const pct8 = matches ? (count8/matches*100).toFixed(2) : "0.00";
-    
-    html += `
-    <div class="rank8-card">
-      <div class="rank8-label">8등급 <span class="rank8-sub">(MAX)</span></div>
-      <div class="rank8-value">${count8.toLocaleString()}개 <span style="font-size:14px; opacity:0.7">(${pct8}%)</span></div>
-    </div>`;
-
-    const otherGrades = entries.filter(e => e.r !== 8);
-    if(otherGrades.length > 0) {
-      html += `<button class="toggle-details-btn" onclick="toggleDetails(this)">▼ 나머지 등급 보기 (${otherGrades.length}종)</button>`;
-      html += `<div class="hidden-details" id="hiddenDetails">
-        <table class="detail-table" style="margin-top:10px;">
-        <thead><tr><th>등급</th><th>개수</th><th>확률</th></tr></thead>
-        <tbody>`;
-      otherGrades.forEach(e => {
-        const pct = (e.c/matches*100).toFixed(2);
-        let badgeClass = "rank-badge"; if(e.r >= 5) badgeClass += " a"; else badgeClass += " s"; 
-        html += `<tr><td><span class="${badgeClass}">${e.r}등급</span></td><td>${e.c.toLocaleString()}</td><td>${pct}%</td></tr>`;
-      });
-      html += `</tbody></table></div>`;
-    }
-    document.getElementById('dist').innerHTML = html;
-}
-
-function toggleDetails(btn) {
-  const details = document.getElementById('hiddenDetails');
-  const isOpen = details.classList.contains('open');
-  if(isOpen) { details.classList.remove('open'); btn.innerHTML = `▼ 나머지 등급 보기`; btn.style.background = "rgba(255,255,255,0.05)"; } 
-  else { details.classList.add('open'); btn.innerHTML = `▲ 접기`; btn.style.background = "rgba(255,255,255,0.15)"; }
-}
+/* ========= UI 제어 (사이드바 등) ========= */
+function openSidebar() { document.getElementById('sidebar').classList.add('active'); document.getElementById('sidebarOverlay').classList.add('active'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebarOverlay').classList.remove('active'); }
+document.getElementById('openSidebarBtn').onclick = openSidebar;
+document.getElementById('closeSidebarBtn').onclick = closeSidebar;
+document.getElementById('sidebarOverlay').onclick = closeSidebar;
+document.getElementById('btnReset').onclick = () => location.reload();
 
 document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.s-btn'); if(!btn || !btn.dataset.target) return;
+    const btn = e.target.closest('.s-btn'); if(!btn) return;
     const input = document.getElementById(btn.dataset.target);
-    if(input) input.value = (parseInt(input.value||0) + parseInt(btn.dataset.delta));
+    input.value = parseInt(input.value||0) + parseInt(btn.dataset.delta);
 });
+
+/* 마우스 휠 조절 로직 */
 function enableWheelStep(el){
   el.addEventListener('wheel',(e)=>{ if(document.activeElement!==el) return; e.preventDefault(); const delta = e.deltaY<0? 1 : -1; el.value = String(parseInt(el.value||"0",10) + delta); }, {passive:false});
 }
-['obs_hp','obs_atk','obs_def','obs_agi'].forEach(id => { const el = document.getElementById(id); if(el) enableWheelStep(el); });
-
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('sidebarOverlay');
-const closeBtn = document.getElementById('closeSidebarBtn');
-function openSidebar() { sidebar.classList.add('active'); overlay.classList.add('active'); closeBtn.style.display = 'block'; document.body.style.overflow = 'hidden'; }
-function closeSidebar() { sidebar.classList.remove('active'); overlay.classList.remove('active'); closeBtn.style.display = 'none'; document.body.style.overflow = 'auto'; }
-document.getElementById('openSidebarBtn').addEventListener('click', openSidebar);
-closeBtn.addEventListener('click', closeSidebar);
-overlay.addEventListener('click', closeSidebar);
-document.getElementById('btnAdmin').onclick = ()=>location.href="./admin.html";
 
 (async function init(){
-    await loadGlobalTable();
+    await loadData();
     await loadRank8Map();
     renderChosungTokens();
-    renderPetList();
+    ['obs_hp','obs_atk','obs_def','obs_agi'].forEach(id => { const el = document.getElementById(id); if(el) enableWheelStep(el); });
 })();
 </script>
 </body>
