@@ -394,7 +394,7 @@ function showToast(msg){
   setTimeout(()=>{ t.style.opacity = '0'; setTimeout(()=>t.remove(), 300); }, 2000);
 }
 
-/* 툴팁 로직 복구 */
+/* 툴팁 로직 */
 const tipEl = document.getElementById('floatingTip');
 function hideTip(){ tipEl.classList.remove('show'); }
 function showTip(target){
@@ -418,7 +418,7 @@ document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip')
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
 
-/* ========= 데이터 로딩 복구 ========= */
+/* ========= 데이터 로딩 ========= */
 async function loadGlobalTable(){
   try{
     const obj = await fetchJSON(REMOTE_PETS);
@@ -441,7 +441,10 @@ async function loadRank8Map(){
   for(const path of R8_JSON_CANDIDATES){
     try{
       const m = await fetchJSON(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${path}`);
-      if (typeof m==="object" && !Array.isArray(m)){ R8MAP = m; return; }
+      if (typeof m==="object" && !Array.isArray(m)){ 
+        R8MAP = m; 
+        return; 
+      }
     }catch{}
   }
 }
@@ -570,7 +573,7 @@ function renderFavChips(){
   });
 }
 
-/* ========= 페트 계산기 기능 복구 ========= */
+/* ========= 페트 계산기 기능 ========= */
 function selectPetName(n){
   selectedName=n; renderPetList();
   const row=GLOBAL_TABLE[n]||null;
@@ -607,8 +610,11 @@ function renderPetList(){
     if(selectedName === n) item.classList.add('selected');
     const nameSpan = document.createElement('span'); nameSpan.className = 'pet-name'; nameSpan.textContent = n;
     item.appendChild(nameSpan);
+    
     const rightDiv = document.createElement('div'); rightDiv.className = 'pet-right';
     const r8 = R8MAP[n];
+    
+    // 100% 보장 배지 렌더링 복구
     if (r8 && (Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8.length : (r8.length||0))) {
         const badge = document.createElement('span'); badge.className = 'badge-r8 tip'; badge.textContent = '100%';
         const sets = Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8 : r8;
@@ -616,14 +622,18 @@ function renderPetList(){
         badge.addEventListener('click', (e) => { e.stopPropagation(); });
         rightDiv.appendChild(badge);
     }
+    
     const star = document.createElement('span'); star.className = 'fav-icon ' + (isFav(n)?'active':''); star.textContent = '★';
     star.onclick = (e) => { e.stopPropagation(); toggleFav(n); };
     rightDiv.appendChild(star);
     item.appendChild(rightDiv);
+    
     item.onclick = () => { selectPetName(n); closeSidebar(); };
     listEl.appendChild(item);
   });
 }
+
+document.getElementById('petSearch').addEventListener('input', renderPetList);
 
 document.getElementById('btnCalc').onclick = () => {
   if(!selectedName) return showToast("페트를 선택하세요");
@@ -652,7 +662,6 @@ function calculate_logic(pku, obs){
   return {matches, rank8, dist};
 }
 
-/* ========= 분석 결과 출력 복구 (원본.html 스타일) ========= */
 function renderResult(res) {
   const matches = res.matches|0;
   const rank8 = res.rank8|0;
@@ -740,7 +749,8 @@ function enableWheelStep(el){
 
 (async function init(){
     await loadGlobalTable();
-    await loadRank8Map();
+    await loadRank8Map(); // 보장 맵 데이터 먼저 로드
+    renderPetList();      // 맵 데이터 로드 후 배지 표시를 위해 다시 그림
     renderChosungTokens();
     ['obs_hp','obs_atk','obs_def','obs_agi'].forEach(id => { const el = document.getElementById(id); if(el) enableWheelStep(el); });
     document.getElementById('btnAdmin').onclick = ()=>location.href="./admin.html";
