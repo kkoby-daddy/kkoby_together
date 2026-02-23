@@ -111,10 +111,33 @@
     -webkit-overflow-scrolling: touch;
   }
   
-  .top-nav { display: flex; justify-content: flex-end; align-items: center; padding: 15px 20px; z-index: 20; min-height: 60px; position: absolute; top: 0; right: 0; left: 0; pointer-events: none; }
-  .nav-controls { pointer-events: auto; display: flex; align-items: center; gap: 12px; background: rgba(15, 17, 21, 0.8); backdrop-filter: blur(5px); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-  .menu-toggle { display: none; font-size: 24px; color: var(--text-main); cursor: pointer; }
-  .admin-btn { font-size: 18px; color: var(--text-sub); cursor: pointer; background: transparent; border: none; padding: 4px; transition: 0.2s; }
+  .top-nav {
+    display: flex; justify-content: flex-end; align-items: center;
+    padding: 15px 20px; z-index: 20; min-height: 60px;
+    position: absolute; top: 0; right: 0; left: 0;
+    pointer-events: none;
+  }
+  
+  .nav-controls {
+    pointer-events: auto;
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(15, 17, 21, 0.8);
+    backdrop-filter: blur(5px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .menu-toggle { 
+    display: none;
+    font-size: 24px; color: var(--text-main); cursor: pointer; 
+  }
+  
+  .admin-btn {
+    font-size: 18px; color: var(--text-sub); cursor: pointer;
+    background: transparent; border: none; padding: 4px;
+    transition: 0.2s;
+  }
   .admin-btn:hover { color: var(--accent); transform: scale(1.1); text-shadow: 0 0 8px var(--accent); }
 
   .dashboard {
@@ -142,7 +165,7 @@
   .notice-title::before { content: 'ⓘ'; color: var(--accent); font-size: 20px; }
   .notice-content { padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 16px; line-height: 1.8; color: var(--text-sub); }
 
-  /* 로그 알리미 패널 (하단 전체) */
+  /* 로그 알리미 패널 */
   .log-panel { grid-column: 1 / -1; min-height: auto; margin-top: 10px; }
   .log-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
   
@@ -236,15 +259,44 @@
   .rank-badge.s { color: var(--ok); background: rgba(53, 199, 89, 0.15); border: 1px solid var(--ok); }
   .rank-badge.a { color: var(--warn); background: rgba(255, 179, 0, 0.15); border: 1px solid var(--warn); }
 
+  /* --- 모바일 반응형 스타일 (원본.html과 일치시킴) --- */
   @media (max-width: 900px) {
     body { height: auto; overflow: auto; background: #1a1d26; }
     .app-container { flex-direction: column; height: auto; min-height: 100vh; }
-    .sidebar { position: fixed; top: 0; left: 0; width: 85%; max-width: 320px; height: 100vh; transform: translateX(-100%); }
+    
+    .sidebar {
+      position: fixed; top: 0; left: 0; width: 85%; max-width: 320px;
+      height: 100vh; transform: translateX(-100%);
+      box-shadow: 2px 0 20px rgba(0,0,0,0.5); border-right: 1px solid rgba(255,255,255,0.1);
+    }
     .sidebar.active { transform: translateX(0); }
-    .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 90; display: none; }
-    .sidebar-overlay.active { display: block; }
-    .dashboard { grid-template-columns: 1fr; padding: 60px 15px 15px; }
+    .sidebar-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 90;
+      display: none; opacity: 0; transition: opacity 0.3s;
+    }
+    .sidebar-overlay.active { display: block; opacity: 1; }
+    
+    .main-content { overflow: visible; height: auto; }
     .menu-toggle { display: block; }
+    
+    .dashboard { grid-template-columns: 1fr; padding: 60px 15px 15px; gap: 15px; }
+    
+    .panel { padding: 20px; backdrop-filter: none; min-height: auto; }
+    .notice-panel { padding: 15px 20px; }
+    
+    /* 상단 네비게이션 모바일 최적화 */
+    .top-nav { 
+      position: fixed; justify-content: space-between; 
+      padding: 10px 15px; background: rgba(15,17,21,0.95); 
+      pointer-events: auto; width: 100%;
+    }
+    .nav-controls { background: transparent; border: none; padding: 0; }
+    .menu-title-mobile { display: block; font-weight: 700; color: var(--accent); font-family: var(--font-tech); font-size: 16px; }
+  }
+  
+  @media (min-width: 901px) {
+      .menu-title-mobile { display: none; }
   }
 
   #toastWrap { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; width: 90%; pointer-events: none; }
@@ -279,6 +331,7 @@
   <!-- 2. 메인 컨텐츠 -->
   <main class="main-content">
     <nav class="top-nav">
+      <div class="menu-title-mobile">꼬비아빠 놀이터</div>
       <div class="nav-controls">
           <div class="menu-toggle" id="openSidebarBtn" style="margin-right: 10px;">☰</div>
           <button class="admin-btn" id="btnAdmin" title="Admin">★</button>
@@ -419,7 +472,7 @@ document.addEventListener('mouseover', (e)=>{ const t = e.target.closest('.tip')
 document.addEventListener('mouseout', (e)=>{ const t = e.target.closest('.tip'); if(t) hideTip(); }, true);
 window.addEventListener('scroll', hideTip, true);
 
-/* ========= 데이터 로딩 최적화 ========= */
+/* ========= 데이터 로딩 ========= */
 async function loadGlobalTable(){
   try{
     const obj = await fetchJSON(REMOTE_PETS);
@@ -444,7 +497,7 @@ async function loadRank8Map(){
       const m = await fetchJSON(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${path}`);
       if (typeof m==="object" && !Array.isArray(m)){ 
         R8MAP = m; 
-        renderPetList(); // 배지 표시를 위해 다시 렌더링
+        renderPetList();
         return; 
       }
     }catch{}
@@ -575,28 +628,24 @@ function renderFavChips(){
   });
 }
 
-/* ========= 페트 리스트 렌더링 (배지 및 모바일 검색 최적화) ========= */
+/* ========= 페트 리스트 렌더링 ========= */
 function renderPetList(){
   const kw = document.getElementById('petSearch').value.trim();
   const listEl = document.getElementById('petList');
   if(!listEl) return;
   listEl.innerHTML = "";
-  
   const filtered = ALL_NAMES.filter(n => {
     const matchKw = kw ? n.includes(kw) : true;
     const matchCho = currentChosung ? getChosung(n).startsWith(currentChosung) : true;
     return matchKw && matchCho;
   });
-
   filtered.forEach(n => {
     const item = document.createElement('div'); item.className = 'pet-item';
     if(selectedName === n) item.classList.add('selected');
     const nameSpan = document.createElement('span'); nameSpan.className = 'pet-name'; nameSpan.textContent = n;
     item.appendChild(nameSpan);
-    
     const rightDiv = document.createElement('div'); rightDiv.className = 'pet-right';
     const r8 = R8MAP[n];
-    
     if (r8) {
         const sets = Array.isArray(r8.obs_100_rank8) ? r8.obs_100_rank8 : (Array.isArray(r8) ? r8 : null);
         if (sets && sets.length > 0) {
@@ -606,22 +655,17 @@ function renderPetList(){
             rightDiv.appendChild(badge);
         }
     }
-    
     const star = document.createElement('span'); star.className = 'fav-icon ' + (isFav(n)?'active':''); star.textContent = '★';
     star.onclick = (e) => { e.stopPropagation(); toggleFav(n); };
     rightDiv.appendChild(star);
     item.appendChild(rightDiv);
-    
     item.onclick = () => { selectPetName(n); closeSidebar(); };
     listEl.appendChild(item);
   });
 }
-
-/* 모바일 검색 입력을 위한 리스너 개선 */
 document.getElementById('petSearch').addEventListener('input', renderPetList);
-document.getElementById('petSearch').addEventListener('keyup', (e) => { if(e.key === "Enter") renderPetList(); });
 
-/* ========= 계산 및 결과 출력 (원본 HUD 로직 유지) ========= */
+/* ========= 계산 및 결과 출력 ========= */
 function selectPetName(n){
   selectedName=n; renderPetList();
   const row=GLOBAL_TABLE[n]||null;
@@ -678,43 +722,27 @@ function renderResult(res) {
   const successPct = matches ? (rank8/matches*100) : 0;
   const appear = matches/TOTAL*100;
   const tries = successPct > 0 ? (100/successPct) : Infinity;
-
   document.getElementById('ringSuccess').style.strokeDasharray = `${Math.min(successPct, 100).toFixed(1)}, 100`;
   const tryGauge = Math.min((tries / 200) * 100, 100);
   document.getElementById('ringTries').style.strokeDasharray = `${tryGauge.toFixed(1)}, 100`;
   const tryColor = tries <= 5 ? 'var(--ok)' : (tries <= 20 ? 'var(--warn)' : 'var(--bad)');
   document.getElementById('ringTries').style.stroke = tryColor;
-
   document.getElementById('kpiSuccess').textContent = successPct.toFixed(2) + "%";
   document.getElementById('kpiTries').textContent = Number.isFinite(tries) ? Math.round(tries).toLocaleString() : "-";
   document.getElementById('kpiAppear').textContent = appear.toFixed(4) + "%";
   document.getElementById('totMatches').textContent = matches.toLocaleString();
   document.getElementById('rank8Matches').textContent = rank8.toLocaleString();
-
   const entries = Object.entries(res.dist).map(([r,c]) => ({r:parseInt(r), c})).sort((a,b) => b.r - a.r);
-  if(entries.length === 0) {
-    document.getElementById('dist').innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sub);">일치하는 결과가 없습니다.</div>`;
-    return;
-  }
-
+  if(entries.length === 0) { document.getElementById('dist').innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sub);">일치하는 결과가 없습니다.</div>`; return; }
   let html = "";
   const grade8 = entries.find(e => e.r === 8);
   const count8 = grade8 ? grade8.c : 0;
   const pct8 = matches ? (count8/matches*100).toFixed(2) : "0.00";
-  
-  html += `
-  <div class="rank8-card">
-    <div class="rank8-label">8등급 <span class="rank8-sub">(MAX)</span></div>
-    <div class="rank8-value">${count8.toLocaleString()}개 <span style="font-size:14px; opacity:0.7">(${pct8}%)</span></div>
-  </div>`;
-
+  html += `<div class="rank8-card"><div class="rank8-label">8등급 <span class="rank8-sub">(MAX)</span></div><div class="rank8-value">${count8.toLocaleString()}개 <span style="font-size:14px; opacity:0.7">(${pct8}%)</span></div></div>`;
   const otherGrades = entries.filter(e => e.r !== 8);
   if(otherGrades.length > 0) {
     html += `<button class="toggle-details-btn" onclick="toggleDetails(this)">▼ 나머지 등급 보기 (${otherGrades.length}종)</button>`;
-    html += `<div class="hidden-details" id="hiddenDetails">
-      <table class="detail-table" style="margin-top:10px;">
-      <thead><tr><th>등급</th><th>개수</th><th>확률</th></tr></thead>
-      <tbody>`;
+    html += `<div class="hidden-details" id="hiddenDetails"><table class="detail-table" style="margin-top:10px;"><thead><tr><th>등급</th><th>개수</th><th>확률</th></tr></thead><tbody>`;
     otherGrades.forEach(e => {
       const pct = (e.c/matches*100).toFixed(2);
       let badgeClass = "rank-badge"; if(e.r >= 5) badgeClass += " a"; else badgeClass += " s"; 
@@ -759,19 +787,13 @@ function enableWheelStep(el){
   el.addEventListener('wheel',(e)=>{ if(document.activeElement!==el) return; e.preventDefault(); const delta = e.deltaY<0? 1 : -1; el.value = String(parseInt(el.value||"0",10) + delta); }, {passive:false});
 }
 
-/* 초기화 실행 순서 개선 */
 (async function init(){
-    // 1. UI 뼈대 즉시 노출
     renderChosungTokens();
     renderPetList();
-    
-    // 2. 입력창 휠 기능 연결
     ['obs_hp','obs_atk','obs_def','obs_agi'].forEach(id => { const el = document.getElementById(id); if(el) enableWheelStep(el); });
     document.getElementById('btnAdmin').onclick = ()=>location.href="./admin.html";
-
-    // 3. 데이터 로드 (백그라운드)
-    loadGlobalTable(); 
-    loadRank8Map(); 
+    await loadGlobalTable(); 
+    await loadRank8Map(); 
 })();
 </script>
 </body>
