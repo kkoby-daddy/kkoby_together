@@ -203,7 +203,7 @@
 <body class="locked">
   <div id="gate" role="dialog" aria-modal="true">
     <div class="panel">
-      <h2>TOGETHER ADMIN</h2>
+      <h2>TOGETHER 놀이터 ADMIN</h2>
       <div class="muted" style="font-size:13px; margin-bottom: 10px;">데이터 관리를 위해 비밀번호를 입력하세요.</div>
       <div class="input-row">
         <input id="gate_pass" type="password" placeholder="Password" autocomplete="current-password" />
@@ -214,7 +214,7 @@
   </div>
 
 <header>
-  <div class="brand">Together PET Admin</div>
+  <div class="brand">Together 놀이터 Admin</div>
   <div class="right">
     <button class="btn ghost btn-sm" id="btnReload">원격 새로고침</button>
     <button class="btn ghost btn-sm" id="btnExport">pets.json 다운로드</button>
@@ -240,7 +240,7 @@
     <div class="row" style="margin-bottom:8px; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.2); padding:8px 10px; border-radius:8px;">
       <div style="display:flex; gap:6px;">
         <button class="btn ghost btn-sm" id="btnListSelectAll">전체 선택</button>
-        <button class="btn ghost btn-sm" id="btnListClearAll">해제</button>
+        <button class="btn ghost btn-sm" id="btnListClearAll">선택 해제</button>
       </div>
       <button class="btn primary btn-sm" id="btnBulkSolve" style="background:rgba(106,160,255,0.15); color:var(--accent); border:1px solid var(--accent);">일괄 k/u 추정</button>
     </div>
@@ -332,13 +332,13 @@
   </section>
 
   <section class="card full-width">
-    <h3> 환각(8등급) 100% 초기치 집계 & 커밋</h3>
+    <h3> 8등급 100% 초기치 계산 & 커밋</h3>
     
     <div class="row" style="margin-bottom:12px; gap:8px;" id="r8FilterChips">
       <label style="margin:0; align-self:center; font-size:13px; color:var(--text-sub);">필터:</label>
       <button class="btn ghost btn-sm filter-btn active" data-filter="all">전체</button>
-      <button class="btn ghost btn-sm filter-btn" data-filter="todo_r8">100% 초기치 계산필요</button>
-      <button class="btn ghost btn-sm filter-btn" data-filter="has_r8">100% 초기치 계산완료</button>
+      <button class="btn ghost btn-sm filter-btn" data-filter="todo_r8">계산필요</button>
+      <button class="btn ghost btn-sm filter-btn" data-filter="has_r8">계산완료</button>
     </div>
 
     <div class="row" style="align-items:center; justify-content:space-between; margin-bottom:10px">
@@ -895,7 +895,14 @@ $("btnNew").addEventListener("click", ()=>{
   sortNames(); renderList(); loadForm(name);
 });
 searchEl.addEventListener("input", renderList);
-$("btnDecCalc").addEventListener("click", renderDecimalsPanel); 
+$("btnDecCalc").addEventListener("click", () => {
+  const box = $("decPanel");
+  if (box.style.display === "block") {
+    box.style.display = "none";
+  } else {
+    renderDecimalsPanel();
+  }
+}); 
 
 document.getElementById("filterChips").addEventListener("click", (e) => {
   const btn = e.target.closest(".filter-btn");
