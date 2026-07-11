@@ -431,7 +431,7 @@ const FAV_LS_KEY = "pet_favs_v1";
 const ALERT_SOUND_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/sam_02.wav`;
 const alertAudio = new Audio(ALERT_SOUND_URL);
 const decoder = new TextDecoder('euc-kr'); 
-const BAG_FULL_REGEX = /가방\s*:\s*\[\s*0\s*\/\s*5\s*\]/;
+const BAG_FULL_REGEX = /가방\s*:\s*\[?\s*0\s*\/\s*5\s*\]?|페트\s*창이\s*가득/;
 const CAPTURE_REGEX = /포획하였습니다|획득하였습니다|나타났다|주웠습니다/;
 
 let GLOBAL_TABLE = {}, ALL_NAMES = [], R8MAP = {}, FAVS = [];
