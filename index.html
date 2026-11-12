@@ -165,34 +165,6 @@
   .notice-title::before { content: 'ⓘ'; color: var(--accent); font-size: 20px; }
   .notice-content { padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 16px; line-height: 1.8; color: var(--text-sub); }
 
-  /* 로그 알리미 패널 */
-  .log-panel { grid-column: 1 / -1; min-height: auto; margin-top: 10px; }
-  .log-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-  
-  .log-container {
-    background: rgba(0,0,0,0.4); border-radius: 12px; padding: 15px;
-    height: 180px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.05);
-    font-family: 'Courier New', Courier, monospace; font-size: 14px;
-  }
-  .log-entry { display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); animation: fadeIn 0.3s ease; }
-  .log-time { color: var(--text-sub); flex-shrink: 0; }
-  .log-msg { word-break: break-all; color: var(--text-main); }
-  .log-msg.highlight { color: var(--bad); font-weight: 700; text-shadow: 0 0 8px rgba(255,81,113,0.3); }
-  .log-msg.capture { color: var(--warn); font-weight: 700; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-  .btn-dir-picker {
-    padding: 10px 18px; background: rgba(106, 160, 255, 0.1);
-    border: 1px dashed var(--accent); color: var(--accent); border-radius: 8px;
-    cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; gap: 8px;
-  }
-  .btn-dir-picker:hover { background: rgba(106, 160, 255, 0.2); }
-  
-  .log-controls { display: flex; align-items: center; gap: 15px; }
-  .status-indicator { font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; }
-  .dot.active { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
-
   /* 입력 패널 스타일 */
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
   .stat-col label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; text-align: center; }
@@ -259,7 +231,7 @@
   .rank-badge.s { color: var(--ok); background: rgba(53, 199, 89, 0.15); border: 1px solid var(--ok); }
   .rank-badge.a { color: var(--warn); background: rgba(255, 179, 0, 0.15); border: 1px solid var(--warn); }
 
-  /* --- 모바일 반응형 스타일 (원본.html과 일치시킴) --- */
+  /* --- 모바일 반응형 스타일 --- */
   @media (max-width: 900px) {
     body { height: auto; overflow: auto; background: #1a1d26; }
     .app-container { flex-direction: column; height: auto; min-height: 100vh; }
@@ -391,21 +363,6 @@
           <div id="dist"><div style="text-align:center; color:var(--text-sub); padding:20px;">결과가 여기에 표시됩니다.</div></div>
         </div>
       </section>
-
-      <!-- [통합 기능] 페트잡이 로그 알리미 -->
-      <section class="panel log-panel">
-        <div class="log-header-row">
-            <h2>LOG MONITORING</h2>
-            <div class="log-controls">
-                <div class="status-indicator"><div id="statusDot" class="dot"></div> <span id="dirStatus">폴더 선택 대기...</span></div>
-                <button class="btn-dir-picker" id="btnPicker">📂 Chat 폴더 선택</button>
-                <button id="btnSoundTest" style="padding:8px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--text-sub); border-radius:6px; cursor:pointer; font-size:12px;">🔊 테스트</button>
-            </div>
-        </div>
-        <div class="log-container" id="logDisplay">
-            <div style="color:var(--text-sub); text-align:center; padding-top:60px;">로그 감시를 시작하려면 게임 폴더 내 'Chat' 폴더를 선택하세요.</div>
-        </div>
-      </section>
     </div>
   </main>
 </div>
@@ -428,14 +385,8 @@ const R8_JSON_CANDIDATES = [
 const LS_TABLE = "TogetherPetTable_cache";
 const TOTAL = 178750;
 const FAV_LS_KEY = "pet_favs_v1";
-const ALERT_SOUND_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/sam_02.wav`;
-const alertAudio = new Audio(ALERT_SOUND_URL);
-const decoder = new TextDecoder('euc-kr'); 
-const BAG_FULL_REGEX = /가방\s*:\s*\[?\s*0\s*\/\s*5\s*\]?|페트\s*창이\s*가득/;
-const CAPTURE_REGEX = /포획하였습니다|획득하였습니다|나타났다|주웠습니다/;
 
 let GLOBAL_TABLE = {}, ALL_NAMES = [], R8MAP = {}, FAVS = [];
-let dirHandle = null, lastLogText = "", lastChatFile = "";
 let selectedName = null, currentChosung = "";
 
 function getJSONLS(key, fallback={}){ try{ return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback)); }catch{ return fallback; } }
@@ -502,76 +453,6 @@ async function loadRank8Map(){
       }
     }catch{}
   }
-}
-
-/* ========= 로그 알리미 기능 ========= */
-document.getElementById('btnSoundTest').onclick = () => {
-    alertAudio.currentTime = 0;
-    alertAudio.play().then(() => showToast("알림음 테스트 성공")).catch(() => showToast("사운드 재생이 차단됨"));
-};
-
-document.getElementById('btnPicker').onclick = async () => {
-  try {
-    dirHandle = await window.showDirectoryPicker();
-    document.getElementById('dirStatus').textContent = `감시 중: ${dirHandle.name}`;
-    document.getElementById('statusDot').classList.add('active');
-    document.getElementById('logDisplay').innerHTML = `<div style="color:var(--ok); text-align:center; padding-top:60px;">연결됨. 게임 로그 대기 중...</div>`;
-    alertAudio.load(); startMonitoring(); showToast("로그 감시를 시작합니다.");
-  } catch (e) { showToast("폴더 선택이 취소되었습니다."); }
-};
-
-async function startMonitoring() {
-  setInterval(async () => {
-    if(!dirHandle) return;
-    try {
-      let latestEntry = null; let latestTime = 0;
-      for await (const entry of dirHandle.values()) {
-        if (entry.kind === 'file' && entry.name.toUpperCase().startsWith('CHAT_')) {
-          const file = await entry.getFile();
-          if (file.lastModified > latestTime) { latestTime = file.lastModified; latestEntry = entry; }
-        }
-      }
-      if (latestEntry) {
-        const file = await latestEntry.getFile();
-        const buffer = await file.arrayBuffer();
-        const text = decoder.decode(buffer);
-        if (latestEntry.name !== lastChatFile) {
-          lastChatFile = latestEntry.name;
-          processLogs(text.trim().split('\n').slice(-10).join('\n'), true); 
-          lastLogText = text;
-        } else if (text.length > lastLogText.length) {
-          const newPart = text.substring(lastLogText.length);
-          lastLogText = text;
-          processLogs(newPart, false);
-        }
-      }
-    } catch (err) { console.error(err); }
-  }, 2000);
-}
-
-function processLogs(newText, isInitial) {
-  const lines = newText.split('\n').filter(l => l.trim().length > 0);
-  lines.forEach(line => {
-    const isFullBag = BAG_FULL_REGEX.test(line);
-    const isCapture = CAPTURE_REGEX.test(line);
-    if (isFullBag && !isInitial) { alertAudio.currentTime = 0; alertAudio.play().catch(() => {}); }
-    addLogUI(line, isFullBag, isCapture);
-  });
-}
-
-function addLogUI(msg, isBad, isGood) {
-  const container = document.getElementById('logDisplay');
-  if (container.innerText.includes("시작하려면") || container.innerText.includes("연결됨")) container.innerHTML = "";
-  const div = document.createElement('div'); div.className = 'log-entry';
-  const timeMatch = msg.match(/\[(\d{2}:\d{2}:\d{2})\]/);
-  const timeStr = timeMatch ? timeMatch[1] : new Date().toLocaleTimeString('ko-KR', {hour12:false});
-  const cleanMsg = msg.replace(/\[\d{2}:\d{2}:\d{2}\]/, "").trim();
-  let msgClass = "log-msg";
-  if (isBad) msgClass += " highlight"; else if (isGood) msgClass += " capture";
-  div.innerHTML = `<span class="log-time">[${timeStr}]</span><span class="${msgClass}">${cleanMsg}</span>`;
-  container.appendChild(div);
-  if (container.children.length > 20) container.removeChild(container.firstElementChild);
-  container.scrollTop = container.scrollHeight;
 }
 
 /* ========= 초성 필터 로직 ========= */
